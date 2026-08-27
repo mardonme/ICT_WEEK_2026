@@ -129,5 +129,13 @@ const { path } = useRoute()
     padding-inline: $pad-mobile;
     padding-bottom: 32px;
   }
+
+  /* Sticky panel bo'lim tepasini to'smasligi uchun */
+  > [id] {
+    scroll-margin-top: 132px;
+
+    @include tablet { scroll-margin-top: 108px; }
+    @include mobile { scroll-margin-top: 76px; }
+  }
 }
 </style>

@@ -1,34 +1,78 @@
 <script setup>
-import { ref } from 'vue'
+import { computed, nextTick, onMounted, onUnmounted, reactive, ref, watch } from 'vue'
 import BaseIcon from './ui/BaseIcon.vue'
+import { useScrollSpy } from '@/composables/useScrollSpy'
+import { useStickyHeader } from '@/composables/useStickyHeader'
 import logoUrl from '@/assets/logos/misc/ict-week-logo.svg'
 
 const NAV_LINKS = [
-  { label: 'Home', href: '#top', current: true },
-  { label: 'Program', href: '#program' },
-  { label: 'Partners', href: '#partners' },
-  // Figmada desktopda "Incentives", planshetda "Exhibition"
-  { label: 'Incentives', tabletLabel: 'Exhibition', href: '#incentives' },
+  { key: 'home', label: 'Home', href: '#top', selector: '.hero' },
+  { key: 'program', label: 'Program', href: '#program', selector: '#program' },
+  { key: 'partners', label: 'Partners', href: '#partners', selector: '#partners' },
+  {
+    key: 'incentives',
+    label: 'Incentives',
+    // Figmada planshet versiyasida bu havola "Exhibition" deb nomlangan
+    tabletLabel: 'Exhibition',
+    href: '#incentives',
+    selector: '#incentives',
+  },
 ]
 
 const menuOpen = ref(false)
+const activeKey = useScrollSpy(NAV_LINKS.map(({ key, selector }) => ({ key, selector })))
+const { stuck, hidden } = useStickyHeader()
+
+// Menyu ochiq bo'lsa panel yashirinmaydi
+const isHidden = computed(() => hidden.value && !menuOpen.value)
+
+/* --- Faol havola ostidagi siljiydigan pill --- */
+const listEl = ref(null)
+const linkEls = ref([])
+const pill = reactive({ left: 0, width: 0, ready: false })
+
+const measurePill = () => {
+  const i = NAV_LINKS.findIndex((l) => l.key === activeKey.value)
+  const el = linkEls.value[i]
+  if (!el || !listEl.value) return
+  pill.left = el.offsetLeft
+  pill.width = el.offsetWidth
+  pill.ready = true
+}
+
+watch(activeKey, () => nextTick(measurePill))
+
+onMounted(async () => {
+  await document.fonts.ready
+  measurePill()
+  window.addEventListener('resize', measurePill)
+})
+onUnmounted(() => window.removeEventListener('resize', measurePill))
 </script>
 
 <template>
-  <header class="header">
+  <header class="header" :class="{ 'header--stuck': stuck, 'header--hidden': isHidden }">
     <div class="header__bar">
       <a class="header__logo" href="#top" aria-label="ICT WEEK 2026 — home">
         <img :src="logoUrl" alt="" width="67" height="42" />
       </a>
 
       <nav class="header__nav" aria-label="Main navigation">
-        <ul class="header__list">
-          <li v-for="link in NAV_LINKS" :key="link.label">
+        <ul ref="listEl" class="header__list">
+          <span
+            v-show="pill.ready"
+            class="header__pill"
+            :style="{ transform: `translateX(${pill.left}px)`, width: `${pill.width}px` }"
+            aria-hidden="true"
+          />
+
+          <li v-for="(link, i) in NAV_LINKS" :key="link.key">
             <a
+              :ref="(el) => (linkEls[i] = el)"
               class="header__link"
-              :class="{ 'header__link--current': link.current }"
+              :class="{ 'header__link--current': link.key === activeKey }"
               :href="link.href"
-              :aria-current="link.current ? 'page' : undefined"
+              :aria-current="link.key === activeKey ? 'true' : undefined"
             >
               <span v-if="link.tabletLabel" class="header__label-wide">{{ link.label }}</span>
               <span v-if="link.tabletLabel" class="header__label-tablet">{{ link.tabletLabel }}</span>
@@ -73,8 +117,14 @@ const menuOpen = ref(false)
     <Transition name="menu">
       <nav v-show="menuOpen" id="mobile-menu" class="header__mobile" aria-label="Mobile navigation">
         <ul>
-          <li v-for="link in NAV_LINKS" :key="link.label">
-            <a :href="link.href" @click="menuOpen = false">{{ link.label }}</a>
+          <li v-for="link in NAV_LINKS" :key="link.key">
+            <a
+              :href="link.href"
+              :class="{ 'is-active': link.key === activeKey }"
+              @click="menuOpen = false"
+            >
+              {{ link.label }}
+            </a>
           </li>
         </ul>
       </nav>
@@ -84,12 +134,19 @@ const menuOpen = ref(false)
 
 <style lang="scss" scoped>
 .header {
-  position: relative;
+  position: sticky;
+  top: 0;
   z-index: 20;
   padding-top: 37px;
+  /* Panelning o'zi joyida qoladi, faqat siljiydi — kontent sakramaydi */
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
 
   @include tablet { padding-top: 32px; }
   @include mobile { padding-top: 0; }
+}
+
+.header--hidden {
+  transform: translateY(-140%);
 }
 
 /* --- Pill --- */
@@ -104,7 +161,6 @@ const menuOpen = ref(false)
   border: 1px solid #171a1c;
   border-radius: $r-pill;
   background: $c-surface;
-  /* Figmadagi GLASS effekt: orqa fon blur + yuqori qirradagi yorug' chiziq */
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
   box-shadow:
@@ -112,6 +168,7 @@ const menuOpen = ref(false)
     0 2px 2px rgba(0, 0, 0, 0.5),
     inset 0 1px 0 rgba(255, 255, 255, 0.14),
     inset 0 -1px 0 rgba(255, 255, 255, 0.04);
+  transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 
   @include tablet {
     gap: 16px;
@@ -131,6 +188,21 @@ const menuOpen = ref(false)
   }
 }
 
+/* Skroll qilinganda kontent ustida turadi — fon quyuqroq bo'ladi */
+.header--stuck .header__bar {
+  border-color: rgba(255, 255, 255, 0.12);
+  background: rgba(10, 18, 24, 0.72);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow:
+    0 18px 40px rgba(0, 0, 0, 0.6),
+    0 2px 2px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.16),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.04);
+
+  @include mobile { background: rgba(10, 18, 24, 0.9); }
+}
+
 .header__logo img {
   width: 67px;
   height: 42px;
@@ -144,6 +216,7 @@ const menuOpen = ref(false)
 }
 
 .header__list {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 24px;
@@ -152,35 +225,40 @@ const menuOpen = ref(false)
   @include tablet { gap: 16px; padding-inline: 0; }
 }
 
+/* Faol bo'lim ostidagi pill — havoladan havolaga siljiydi */
+.header__pill {
+  position: absolute;
+  inset-block: 0;
+  left: 0;
+  z-index: 0;
+  border-radius: $r-pill;
+  background: $c-navy-deep;
+  box-shadow: inset 0 0 0 1px rgba(132, 255, 193, 0.22);
+  transition:
+    transform 0.45s cubic-bezier(0.34, 1.25, 0.64, 1),
+    width 0.45s cubic-bezier(0.34, 1.25, 0.64, 1);
+}
+
 .header__link {
   position: relative;
+  z-index: 1;
   display: block;
+  padding: 16px 24px;
   color: $c-muted;
   font-size: 16px;
   font-weight: 500;
-  line-height: 1.4;
+  line-height: 20px;
+  white-space: nowrap;
   transition: color 0.25s ease;
 
   &:hover { color: $c-white; }
 
-  /* Ostidan chiqadigan mint chiziq */
-  &:not(.header__link--current)::after {
-    content: '';
-    position: absolute;
-    bottom: -4px;
-    left: 0;
-    width: 100%;
-    height: 2px;
-    border-radius: 2px;
-    background: $c-accent;
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
-  }
+  @include tablet { padding: 10px 12px; font-size: 12px; line-height: 16px; }
+}
 
-  &:hover::after { transform: scaleX(1); }
-
-  @include tablet { font-size: 12px; }
+.header__link--current {
+  color: $c-white;
+  font-weight: 600;
 }
 
 .header__label-tablet { display: none; }
@@ -188,21 +266,6 @@ const menuOpen = ref(false)
 @include tablet {
   .header__label-wide { display: none; }
   .header__label-tablet { display: inline; }
-}
-
-.header__link--current {
-  padding: 16px 24px;
-  border-radius: $r-pill;
-  background: $c-navy-deep;
-  backdrop-filter: blur(22.6px);
-  color: $c-white;
-  font-weight: 600;
-  line-height: 20px;
-
-  @include tablet {
-    padding: 10px 12px;
-    line-height: 16px;
-  }
 }
 
 /* --- O'ng tomon --- */
@@ -220,14 +283,15 @@ const menuOpen = ref(false)
   gap: 4px;
   height: 52px;
   padding: 0 20px 0 24px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: $r-pill;
   background: $c-surface-dim;
   color: $c-muted;
   font-size: 16px;
   font-weight: 500;
-  transition: color 0.2s ease;
+  transition: color 0.2s ease, border-color 0.25s ease, background-color 0.25s ease;
 
-  &:hover { color: $c-white; }
+  &:hover { border-color: rgba(255, 255, 255, 0.22); background: rgba(255, 255, 255, 0.06); color: $c-white; }
 
   svg { color: $c-muted-alt; }
 
@@ -281,7 +345,18 @@ const menuOpen = ref(false)
   @include mobile { display: grid; }
 }
 
-/* --- Mobile navigation --- */
+/* --- Mobil menyu --- */
+.menu-enter-active,
+.menu-leave-active {
+  transition: opacity 0.28s ease, transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.menu-enter-from,
+.menu-leave-to {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
 .header__mobile {
   display: none;
 
@@ -289,7 +364,8 @@ const menuOpen = ref(false)
     display: block;
     padding: 8px $pad-mobile 16px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    background: $c-navy;
+    background: rgba(10, 18, 24, 0.96);
+    backdrop-filter: blur(16px);
 
     a {
       display: block;
@@ -300,6 +376,13 @@ const menuOpen = ref(false)
       transition: color 0.2s ease, padding-left 0.25s ease;
 
       &:hover { padding-left: 10px; color: $c-accent; }
+
+      &.is-active {
+        padding-left: 10px;
+        border-left: 2px solid $c-accent;
+        color: $c-white;
+        font-weight: 600;
+      }
     }
   }
 }
