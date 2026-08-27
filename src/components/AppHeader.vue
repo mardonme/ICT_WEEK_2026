@@ -101,8 +101,17 @@ const menuOpen = ref(false)
   width: min(1040px, calc(100% - #{$pad-desktop * 2}));
   margin-inline: auto;
   padding: 14px 14px 14px 32px;
+  border: 1px solid #171a1c;
   border-radius: $r-pill;
   background: $c-surface;
+  /* Figmadagi GLASS effekt: orqa fon blur + yuqori qirradagi yorug' chiziq */
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow:
+    0 16px 30px rgba(0, 0, 0, 0.5),
+    0 2px 2px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.14),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.04);
 
   @include tablet {
     gap: 16px;
@@ -114,9 +123,11 @@ const menuOpen = ref(false)
     gap: 12px;
     width: 100%;
     padding: 12px 18px;
-    border-radius: 0;
+    border: 0;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 0;
     background: $c-card;
+    box-shadow: none;
   }
 }
 

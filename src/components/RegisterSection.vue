@@ -1,4 +1,5 @@
 <script setup>
+import { computed, reactive, ref } from 'vue'
 import BaseIcon from './ui/BaseIcon.vue'
 import { navigate } from '@/composables/useRoute'
 
@@ -36,28 +37,56 @@ const COUNTRIES = [
   'United States', 'Canada', 'Brazil', 'Australia', 'Other',
 ]
 
-const LEFT_FIELDS = [
-  { id: 'full-name', label: 'Full name', type: 'text', placeholder: 'e.g. John Doe', autocomplete: 'name', required: true },
-  { id: 'email', label: 'Email', type: 'email', placeholder: 'e.g. alex@company.com', autocomplete: 'email', required: true },
+// Figmada maydonlar ustunlar bo'yicha joylashgan: avval chap ustun to'liq,
+// keyin o'ng ustun. CSS grid ustun bo'ylab to'ldiradi (grid-auto-flow: column).
+// `required: false` — Figmada "(if available)" deb belgilangan yagona maydon.
+const FIELDS = [
+  { id: 'full-name', label: 'Full name', type: 'text', placeholder: 'e.g. John Doe', autocomplete: 'name' },
+  { id: 'email', label: 'Email', type: 'email', placeholder: 'e.g. alex@company.com', autocomplete: 'email' },
   { id: 'company', label: 'Company', type: 'text', placeholder: 'e.g. Tech Global Inc.', autocomplete: 'organization' },
   { id: 'category', label: 'I am attending as', placeholder: 'Select category...', options: CATEGORIES },
   { id: 'source', label: 'How did you hear about us?', placeholder: 'Select source...', options: SOURCES },
-]
-
-const RIGHT_FIELDS = [
   { id: 'country', label: 'Country', placeholder: 'Select country...', options: COUNTRIES },
   { id: 'phone', label: 'Phone number', type: 'tel', placeholder: 'e.g. +1 (555) 019-2834', autocomplete: 'tel' },
   { id: 'position', label: 'Position', type: 'text', placeholder: 'e.g. Managing Director', autocomplete: 'organization-title' },
   { id: 'tracks', label: 'Event track(s) you plan to attend (Select all that apply)', placeholder: 'Select track(s)...', options: TRACKS },
-  { id: 'focal-point', label: 'Name of focal point in IT Park (if available)', type: 'text', placeholder: 'e.g. Contact person or team member name' },
+  { id: 'focal-point', label: 'Name of focal point in IT Park (if available)', type: 'text', placeholder: 'e.g. Contact person or team member name', required: false },
 ]
 
-// Figmada maydonlar ustunlar bo'yicha joylashgan: chap ustun to'liq,
-// keyin o'ng ustun. CSS grid ustun bo'ylab to'ldiradi (grid-auto-flow: column).
-const FIELDS = [...LEFT_FIELDS, ...RIGHT_FIELDS]
+const values = reactive(Object.fromEntries(FIELDS.map((f) => [f.id, ''])))
+const consent = ref(false)
+/** Xatolar faqat "Register now" bosilgandan keyin ko'rsatiladi */
+const showErrors = ref(false)
 
-// Muvaffaqiyatli yuborilgach Figmadagi "Thank page" ga o'tamiz
-const onSubmit = () => navigate('/thank-you')
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
+
+const errors = computed(() => {
+  const out = {}
+  for (const f of FIELDS) {
+    if (f.required === false) continue
+    const v = values[f.id].trim()
+    if (!v) out[f.id] = f.options ? 'Please choose an option' : 'This field is required'
+    else if (f.type === 'email' && !EMAIL_RE.test(v)) out[f.id] = 'Enter a valid email address'
+    else if (f.type === 'tel' && v.replace(/\D/g, '').length < 7) out[f.id] = 'Enter a valid phone number'
+  }
+  if (!consent.value) out.consent = 'Please accept the terms to continue'
+  return out
+})
+
+const isValid = computed(() => Object.keys(errors.value).length === 0)
+const missingCount = computed(() => Object.keys(errors.value).length)
+
+const onSubmit = () => {
+  if (!isValid.value) {
+    showErrors.value = true
+    // Birinchi to'ldirilmagan maydonga fokusni ko'chiramiz
+    const firstId = Object.keys(errors.value)[0]
+    document.getElementById(firstId)?.focus()
+    return
+  }
+  // Muvaffaqiyatli yuborilgach Figmadagi "Thank page" ga o'tamiz
+  navigate('/thank-you')
+}
 </script>
 
 <template>
@@ -70,39 +99,87 @@ const onSubmit = () => navigate('/thank-you')
       </p>
     </header>
 
-    <form class="register__form" novalidate="false" @submit.prevent="onSubmit">
+    <form class="register__form" novalidate @submit.prevent="onSubmit">
       <div class="register__grid">
         <div v-for="field in FIELDS" :key="field.id" class="register__field">
-          <label class="register__label" :for="field.id">{{ field.label }}</label>
+          <label class="register__label" :for="field.id">
+            {{ field.label }}
+            <span v-if="field.required === false" class="register__optional">(optional)</span>
+          </label>
 
-          <select v-if="field.options" :id="field.id" class="register__input" :name="field.id">
-            <option value="" selected>{{ field.placeholder }}</option>
+          <select
+            v-if="field.options"
+            :id="field.id"
+            v-model="values[field.id]"
+            class="register__input"
+            :class="{ 'is-invalid': showErrors && errors[field.id] }"
+            :name="field.id"
+            :aria-invalid="showErrors && Boolean(errors[field.id])"
+            :aria-describedby="showErrors && errors[field.id] ? `${field.id}-error` : undefined"
+          >
+            <option value="">{{ field.placeholder }}</option>
             <option v-for="opt in field.options" :key="opt" :value="opt">{{ opt }}</option>
           </select>
 
           <input
             v-else
             :id="field.id"
+            v-model="values[field.id]"
             class="register__input"
+            :class="{ 'is-invalid': showErrors && errors[field.id] }"
             :name="field.id"
             :type="field.type"
             :placeholder="field.placeholder"
             :autocomplete="field.autocomplete"
-            :required="field.required"
+            :aria-invalid="showErrors && Boolean(errors[field.id])"
+            :aria-describedby="showErrors && errors[field.id] ? `${field.id}-error` : undefined"
           />
+
+          <p v-if="showErrors && errors[field.id]" :id="`${field.id}-error`" class="register__error">
+            {{ errors[field.id] }}
+          </p>
         </div>
       </div>
 
       <div class="register__consent">
-        <input id="consent" class="register__checkbox" type="checkbox" name="consent" required />
+        <input
+          id="consent"
+          v-model="consent"
+          class="register__checkbox"
+          :class="{ 'is-invalid': showErrors && errors.consent }"
+          type="checkbox"
+          name="consent"
+          :aria-invalid="showErrors && Boolean(errors.consent)"
+          :aria-describedby="showErrors && errors.consent ? 'consent-error' : undefined"
+        />
         <label for="consent">
           Yes, I agree that IT Park Uzbekistan team may contact me by e-mail to inquire about my
           request, and I am aware that my shared personal data will be saved.
         </label>
       </div>
 
+      <p v-if="showErrors && errors.consent" id="consent-error" class="register__error">
+        {{ errors.consent }}
+      </p>
+
+      <p id="submit-hint" class="visually-hidden">
+        {{ isValid ? 'All required fields are complete.' : `${missingCount} required fields still need to be completed.` }}
+      </p>
+
       <div class="register__actions">
-        <button class="register__submit" type="submit">
+        <p v-if="showErrors && !isValid" class="register__summary" role="alert">
+          Please complete {{ missingCount }} highlighted
+          {{ missingCount === 1 ? 'field' : 'fields' }} above.
+        </p>
+
+        <!-- Tugma ataylab `disabled` emas: bosilganda qaysi maydon
+             yetishmayotganini aytishi kerak. Faqat ko'rinishi "o'chiq". -->
+        <button
+          class="register__submit"
+          :class="{ 'is-locked': !isValid }"
+          type="submit"
+          aria-describedby="submit-hint"
+        >
           Register now
           <BaseIcon name="arrow-up-right" :size="24" />
         </button>
@@ -200,6 +277,31 @@ const onSubmit = () => navigate('/thank-you')
   line-height: 18.58px;
 }
 
+.register__optional {
+  color: rgba(255, 255, 255, 0.45);
+  font-weight: 500;
+}
+
+/* --- Xato holati --- */
+.register__error {
+  color: #ff9b9b;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.35;
+  animation: err-in 0.25s ease;
+}
+
+@keyframes err-in {
+  from { opacity: 0; transform: translateY(-3px); }
+}
+
+.register__summary {
+  flex: 1;
+  color: #ff9b9b;
+  font-size: 13px;
+  font-weight: 600;
+}
+
 .register__input {
   width: 100%;
   height: 40px;
@@ -221,6 +323,12 @@ const onSubmit = () => navigate('/thank-you')
     outline: none;
     background: rgba(255, 255, 255, 0.12);
     box-shadow: 0 0 0 2px rgba(132, 255, 193, 0.55);
+  }
+
+  &.is-invalid {
+    box-shadow: 0 0 0 1.5px rgba(255, 155, 155, 0.75);
+
+    &:focus { box-shadow: 0 0 0 2px rgba(255, 155, 155, 0.9); }
   }
 
   /* select uchun o'q ikonkasi */
@@ -256,6 +364,8 @@ const onSubmit = () => navigate('/thank-you')
   height: 15px;
   margin: 3px 2px;
   accent-color: $c-accent;
+
+  &.is-invalid { outline: 1.5px solid rgba(255, 155, 155, 0.85); outline-offset: 2px; }
 }
 
 .register__actions {
@@ -264,7 +374,7 @@ const onSubmit = () => navigate('/thank-you')
   justify-content: flex-end;
   gap: 16px;
 
-  @include mobile { flex-direction: column-reverse; align-items: stretch; }
+  @include mobile { flex-direction: column; align-items: stretch; }
 }
 
 .register__submit {
@@ -283,6 +393,17 @@ const onSubmit = () => navigate('/thank-you')
   }
 
   &:active { transform: translateY(0) scale(0.98); }
+
+  /* Forma to'liq to'ldirilmaguncha tugma "o'chiq" ko'rinadi.
+     `disabled` emas — bosilganda qaysi maydon yetishmayotganini aytishi kerak. */
+  &.is-locked {
+    background: rgba(132, 255, 193, 0.28);
+    color: rgba(18, 27, 38, 0.55);
+    cursor: not-allowed;
+
+    &:hover { transform: none; box-shadow: none; filter: none; }
+    &:active { transform: none; }
+  }
 
   @include mobile { justify-content: center; width: 100%; }
 }

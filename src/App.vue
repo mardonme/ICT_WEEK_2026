@@ -18,9 +18,7 @@ const { path } = useRoute()
 
   <div id="top" class="page" :class="{ 'page--compact': path === '/thank-you' }">
     <div class="page__decor" aria-hidden="true">
-      <span class="page__aurora page__aurora--1"></span>
-      <span class="page__aurora page__aurora--2"></span>
-      <span class="page__aurora page__aurora--3"></span>
+      <span class="page__aurora"></span>
     </div>
 
     <ThankYouView v-if="path === '/thank-you'" />
@@ -72,44 +70,36 @@ const { path } = useRoute()
 
 .page__aurora {
   position: absolute;
-  left: 0;
-  width: 100%;
+  inset: 0;
   background-image: url('@/assets/images/aurora.webp');
-  background-repeat: no-repeat;
-  background-size: 210% 100%;
-  background-position: center;
-  opacity: 0.2;
-  mask-image:
-    linear-gradient(
-      to right,
-      #000 0%,
-      rgba(0, 0, 0, 0.3) 16%,
-      transparent 32%,
-      transparent 68%,
-      rgba(0, 0, 0, 0.3) 84%,
-      #000 100%
-    ),
-    linear-gradient(to bottom, transparent 0%, #000 24%, #000 76%, transparent 100%);
-  mask-composite: intersect;
-  -webkit-mask-composite: source-in;
-}
+  background-repeat: repeat;
+  /* Figmada rasm 2420 px kenglikda ko'rsatiladi (1440 frame'ning 168% i) —
+     shu nisbatda raqamlar o'z o'lchamida qoladi va xiralashmaydi. */
+  background-size: 168% auto;
+  background-position: 5% top;
+  opacity: 0.28;
+  /* Tekstura chapda kuchli, o'ngga qarab so'nadi */
+  mask-image: linear-gradient(
+    to right,
+    #000 0%,
+    rgba(0, 0, 0, 0.78) 40%,
+    rgba(0, 0, 0, 0.5) 68%,
+    rgba(0, 0, 0, 0.18) 88%,
+    transparent 100%
+  );
 
-.page__aurora--1 { top: 500px; height: 1400px; }
+  /* Mobilda viewport ancha tor — kichikroq tekstura yetarli (101 KB -> 17 KB) */
+  @include mobile {
+    background-image: url('@/assets/images/aurora-sm.webp');
+  }
+}
 
 /* Thank page bitta ekran balandligida — dekoratsiya ham unga moslanadi */
-.page--compact {
-  .page__decor {
-    background:
-      radial-gradient(760px 620px at -120px 45%, rgba(20, 72, 68, 0.7), transparent 72%),
-      radial-gradient(760px 620px at calc(100% + 120px) 55%, rgba(18, 68, 66, 0.65), transparent 72%);
-  }
-
-  .page__aurora--1 { top: 0; height: 100%; }
-  .page__aurora--2,
-  .page__aurora--3 { display: none; }
+.page--compact .page__decor {
+  background:
+    radial-gradient(760px 620px at -120px 45%, rgba(20, 72, 68, 0.7), transparent 72%),
+    radial-gradient(760px 620px at calc(100% + 120px) 55%, rgba(18, 68, 66, 0.65), transparent 72%);
 }
-.page__aurora--2 { top: 3250px; height: 1350px; transform: scaleX(-1); }
-.page__aurora--3 { top: 5400px; height: 950px; }
 
 /* ---------- Kontent ---------- */
 .page__main {
