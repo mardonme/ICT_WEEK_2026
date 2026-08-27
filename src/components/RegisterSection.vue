@@ -76,7 +76,26 @@ const errors = computed(() => {
 const isValid = computed(() => Object.keys(errors.value).length === 0)
 const missingCount = computed(() => Object.keys(errors.value).length)
 
-const onSubmit = () => {
+const submitting = ref(false)
+const serverError = ref('')
+/** Botlar to'ldiradigan yashirin maydon — odam uni ko'rmaydi */
+const honeypot = ref('')
+
+/** Forma id'laridan API kutayotgan nomlarga */
+const API_KEYS = {
+  'full-name': 'fullName',
+  email: 'email',
+  company: 'company',
+  category: 'category',
+  source: 'source',
+  country: 'country',
+  phone: 'phone',
+  position: 'position',
+  tracks: 'tracks',
+  'focal-point': 'focalPoint',
+}
+
+const onSubmit = async () => {
   if (!isValid.value) {
     showErrors.value = true
     // Birinchi to'ldirilmagan maydonga fokusni ko'chiramiz
@@ -84,8 +103,29 @@ const onSubmit = () => {
     document.getElementById(firstId)?.focus()
     return
   }
-  // Muvaffaqiyatli yuborilgach Figmadagi "Thank page" ga o'tamiz
-  navigate('/thank-you')
+
+  submitting.value = true
+  serverError.value = ''
+
+  const payload = Object.fromEntries(
+    Object.entries(API_KEYS).map(([id, key]) => [key, values[id]])
+  )
+
+  try {
+    const res = await fetch('/api/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ...payload, consent: consent.value, website: honeypot.value }),
+    })
+    if (!res.ok) throw new Error(String(res.status))
+    // Muvaffaqiyatli yuborilgach Figmadagi "Thank page" ga o'tamiz
+    navigate('/thank-you')
+  } catch {
+    serverError.value =
+      'Could not submit your registration. Please check your connection and try again.'
+  } finally {
+    submitting.value = false
+  }
 }
 </script>
 
@@ -141,6 +181,12 @@ const onSubmit = () => {
         </div>
       </div>
 
+      <!-- Botlar uchun tuzoq: odam bu maydonni ko'rmaydi va Tab bilan ham tushmaydi -->
+      <div class="register__trap" aria-hidden="true">
+        <label for="website">Website</label>
+        <input id="website" v-model="honeypot" type="text" name="website" tabindex="-1" autocomplete="off" />
+      </div>
+
       <div class="register__consent">
         <input
           id="consent"
@@ -172,16 +218,19 @@ const onSubmit = () => {
           {{ missingCount === 1 ? 'field' : 'fields' }} above.
         </p>
 
+        <p v-else-if="serverError" class="register__summary" role="alert">{{ serverError }}</p>
+
         <!-- Tugma ataylab `disabled` emas: bosilganda qaysi maydon
              yetishmayotganini aytishi kerak. Faqat ko'rinishi "o'chiq". -->
         <button
           class="register__submit"
-          :class="{ 'is-locked': !isValid }"
+          :class="{ 'is-locked': !isValid, 'is-busy': submitting }"
           type="submit"
           aria-describedby="submit-hint"
+          :aria-busy="submitting"
         >
-          Register now
-          <BaseIcon name="arrow-up-right" :size="24" />
+          {{ submitting ? 'Sending…' : 'Register now' }}
+          <BaseIcon v-if="!submitting" name="arrow-up-right" :size="24" />
         </button>
       </div>
     </form>
@@ -295,6 +344,16 @@ const onSubmit = () => {
   from { opacity: 0; transform: translateY(-3px); }
 }
 
+/* Honeypot maydoni — ekrandan butunlay chiqarib yuboriladi */
+.register__trap {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
 .register__summary {
   flex: 1;
   color: #ff9b9b;
@@ -396,6 +455,8 @@ const onSubmit = () => {
 
   /* Forma to'liq to'ldirilmaguncha tugma "o'chiq" ko'rinadi.
      `disabled` emas — bosilganda qaysi maydon yetishmayotganini aytishi kerak. */
+  &.is-busy { cursor: progress; opacity: 0.75; }
+
   &.is-locked {
     background: rgba(132, 255, 193, 0.28);
     color: rgba(18, 27, 38, 0.55);

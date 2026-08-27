@@ -85,3 +85,36 @@ va xavfsizlik header'lari (`X-Content-Type-Options`, `Referrer-Policy`, `X-Frame
 ```bash
 npx vercel --prod
 ```
+
+---
+
+## Forma arizalari
+
+Forma `/api/register` (Vercel serverless funksiya) ga yuboriladi. Funksiya
+ma'lumotni tekshiradi va Google Sheets'ga yozadi; ixtiyoriy ravishda Telegram'ga
+xabar yuboradi. Maxfiy URL va tokenlar serverda qoladi — brauzerga chiqmaydi.
+
+### Sozlash
+
+1. `docs/google-apps-script.gs` faylidagi yo'riqnomaga amal qiling
+2. Vercel → Settings → Environment Variables:
+
+| O'zgaruvchi | Majburiy | Nima |
+|---|---|---|
+| `SHEETS_WEBHOOK_URL` | ha | Apps Script veb-ilova URL'i |
+| `TELEGRAM_BOT_TOKEN` | yo'q | BotFather bergan token |
+| `TELEGRAM_CHAT_ID` | yo'q | Kanal yoki chat ID |
+
+3. Qayta deploy qiling
+
+Lokalda funksiyani sinash uchun `npx vercel dev` ishlatiladi — oddiy
+`npm run dev` da `/api` yo'q, shuning uchun forma xato xabarini ko'rsatadi.
+
+`SHEETS_WEBHOOK_URL` sozlanmagan bo'lsa forma baribir ishlayveradi — ariza
+Vercel funksiya loglariga yoziladi, ya'ni yo'qolmaydi.
+
+### Himoya
+
+- **Honeypot** — odam ko'rmaydigan `website` maydoni to'ldirilsa, ariza jim tashlab yuboriladi
+- Barcha maydonlar **serverda qayta tekshiriladi** (frontend validatsiyasiga ishonilmaydi)
+- Har bir qiymat 300 belgigacha qisqartiriladi
