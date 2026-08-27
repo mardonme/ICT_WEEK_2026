@@ -46,14 +46,15 @@ const ROWS = [
     <h2 id="attendees-title" class="attendees__title">Past Attendees Include</h2>
 
     <div class="attendees__grid">
-      <ul v-for="(row, i) in ROWS" :key="i" class="attendees__row">
+      <ul v-for="(row, r) in ROWS" :key="r" class="attendees__row">
         <LogoCard
-          v-for="logo in row"
+          v-for="(logo, i) in row"
           :key="logo.file"
           :src="url(logo.file)"
           :alt="logo.alt"
           :width="logo.width"
           :height="logo.height"
+          :style="{ '--i': r * 5 + i }"
         />
       </ul>
     </div>
@@ -83,6 +84,16 @@ const ROWS = [
 
   @include tablet { font-size: 36px; line-height: 43.2px; }
   @include mobile { font-size: 24px; line-height: 32.78px; color: $c-white; }
+}
+
+/* Bo'lim ekranga kirganda logolar to'lqin bo'lib chiqadi */
+@keyframes logo-in {
+  from { opacity: 0; transform: translateY(16px) scale(0.96); }
+}
+
+.attendees.is-revealed :deep(.logo-card) {
+  animation: logo-in 0.55s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+  animation-delay: calc(var(--i, 0) * 28ms + 120ms);
 }
 
 .attendees__grid {

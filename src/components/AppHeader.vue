@@ -7,7 +7,8 @@ const NAV_LINKS = [
   { label: 'Home', href: '#top', current: true },
   { label: 'Program', href: '#program' },
   { label: 'Partners', href: '#partners' },
-  { label: 'Incentives', href: '#incentives' },
+  // Figmada desktopda "Incentives", planshetda "Exhibition"
+  { label: 'Incentives', tabletLabel: 'Exhibition', href: '#incentives' },
 ]
 
 const menuOpen = ref(false)
@@ -29,7 +30,9 @@ const menuOpen = ref(false)
               :href="link.href"
               :aria-current="link.current ? 'page' : undefined"
             >
-              {{ link.label }}
+              <span v-if="link.tabletLabel" class="header__label-wide">{{ link.label }}</span>
+              <span v-if="link.tabletLabel" class="header__label-tablet">{{ link.tabletLabel }}</span>
+              <template v-else>{{ link.label }}</template>
             </a>
           </li>
         </ul>
@@ -67,13 +70,15 @@ const menuOpen = ref(false)
       </div>
     </div>
 
-    <nav v-show="menuOpen" id="mobile-menu" class="header__mobile" aria-label="Mobile navigation">
-      <ul>
-        <li v-for="link in NAV_LINKS" :key="link.label">
-          <a :href="link.href" @click="menuOpen = false">{{ link.label }}</a>
-        </li>
-      </ul>
-    </nav>
+    <Transition name="menu">
+      <nav v-show="menuOpen" id="mobile-menu" class="header__mobile" aria-label="Mobile navigation">
+        <ul>
+          <li v-for="link in NAV_LINKS" :key="link.label">
+            <a :href="link.href" @click="menuOpen = false">{{ link.label }}</a>
+          </li>
+        </ul>
+      </nav>
+    </Transition>
   </header>
 </template>
 
@@ -137,16 +142,41 @@ const menuOpen = ref(false)
 }
 
 .header__link {
+  position: relative;
   display: block;
   color: $c-muted;
   font-size: 16px;
   font-weight: 500;
   line-height: 1.4;
-  transition: color 0.2s ease;
+  transition: color 0.25s ease;
 
   &:hover { color: $c-white; }
 
+  /* Ostidan chiqadigan mint chiziq */
+  &:not(.header__link--current)::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    border-radius: 2px;
+    background: $c-accent;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  &:hover::after { transform: scaleX(1); }
+
   @include tablet { font-size: 12px; }
+}
+
+.header__label-tablet { display: none; }
+
+@include tablet {
+  .header__label-wide { display: none; }
+  .header__label-tablet { display: inline; }
 }
 
 .header__link--current {
@@ -212,9 +242,10 @@ const menuOpen = ref(false)
   font-size: 16px;
   font-weight: 600;
   white-space: nowrap;
-  transition: filter 0.2s ease;
+  transition: filter 0.25s ease, transform 0.25s cubic-bezier(0.34, 1.4, 0.64, 1);
 
-  &:hover { filter: brightness(1.08); }
+  &:hover { filter: brightness(1.08); transform: translateY(-2px); }
+  &:active { transform: translateY(0) scale(0.97); }
 
   @include tablet { height: 36px; padding: 0 12px; font-size: 12px; }
   @include mobile { height: 38px; padding: 0 16px; font-size: 13px; font-weight: 700; }
@@ -255,6 +286,9 @@ const menuOpen = ref(false)
       color: $c-body;
       font-size: 15px;
       font-weight: 500;
+      transition: color 0.2s ease, padding-left 0.25s ease;
+
+      &:hover { padding-left: 10px; color: $c-accent; }
     }
   }
 }

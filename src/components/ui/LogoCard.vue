@@ -32,6 +32,16 @@ defineProps({
   padding: 0 24px;
   border-radius: $r-md;
   background: rgba(255, 255, 255, 0.012);
+  transition: background-color 0.3s ease, transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+
+  &::before { transition: opacity 0.35s ease; }
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.05);
+    transform: translateY(-4px);
+
+    &::before { opacity: 0.85; }
+  }
 
   @include below-desktop { padding: 0 14px; }
   @include mobile { padding: 0 10px; }
@@ -40,6 +50,9 @@ defineProps({
     width: 100%;
     height: auto;
     object-fit: contain;
+    transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
   }
+
+  &:hover img { transform: scale(1.05); }
 }
 </style>

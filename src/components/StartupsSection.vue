@@ -1,9 +1,9 @@
 <script setup>
 import BaseIcon from './ui/BaseIcon.vue'
 import bg from '@/assets/images/startups-bg.webp'
-import ministryLogo from '@/assets/logos/misc/ministry-itpark.webp'
-import qrCode from '@/assets/logos/misc/startupbase-qr.webp'
-import startupBaseIcon from '@/assets/logos/misc/startup-base-icon.webp'
+import ministryLogo from '@/assets/logos/misc/ministry-itpark.svg'
+import qrCode from '@/assets/logos/misc/startupbase-qr.svg'
+import startupBaseLogo from '@/assets/logos/misc/startup-base.svg'
 
 const FEATURES = [
   { metric: '100%', text: 'Reimbursement for patenting and trademark registration' },
@@ -28,7 +28,7 @@ const FEATURES = [
         <img
           class="startups__bar-logos"
           :src="ministryLogo"
-          alt="Ministry of Digital Technologies of the Republic of Uzbekistan · IT Park Uzbekistan"
+          alt="Ministry of Digital Technologies of the Republic of Uzbekistan and IT Park Uzbekistan"
           width="234"
           height="31"
           loading="lazy"
@@ -56,18 +56,15 @@ const FEATURES = [
           </p>
 
           <a class="startups__qr" href="https://startupbase.uz" rel="noopener">
-            <span class="startups__qr-brand">
-              <img
-                class="startups__qr-icon"
-                :src="startupBaseIcon"
-                alt=""
-                width="49"
-                height="36"
-                loading="lazy"
-                decoding="async"
-              />
-              <span class="startups__qr-label">Startup Base</span>
-            </span>
+            <img
+              class="startups__qr-brand"
+              :src="startupBaseLogo"
+              alt="Startup Base"
+              width="154"
+              height="36"
+              loading="lazy"
+              decoding="async"
+            />
             <img
               class="startups__qr-code"
               :src="qrCode"
@@ -201,6 +198,12 @@ const FEATURES = [
   padding: 14px 24px;
   border-radius: $r-lg;
   background: rgba(255, 255, 255, 0.05);
+  transition: background-color 0.3s ease, transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.09);
+    transform: translateX(4px);
+  }
 
   @include tablet { gap: 12px; padding: 12px 16px; }
   @include mobile { gap: 12px; min-height: 64px; padding: 8px 12px; border-radius: $r-md; }
@@ -262,36 +265,21 @@ const FEATURES = [
   padding: 14px;
   border-radius: 18px;
   background: linear-gradient(90deg, rgba(132, 255, 193, 0) 0%, rgba(132, 255, 193, 0.4) 100%);
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), filter 0.3s ease;
+
+  &:hover { transform: translateY(-3px); filter: brightness(1.1); }
 
   @include below-desktop { flex: none; }
 }
 
-/* Figma: ikonka 47.5 + oraliq 7 + yozuv 99.3 = 154 px */
+/* Figma: ikonka + yozuv bitta vektor, 154x36 */
 .startups__qr-brand {
-  display: flex;
   flex: 1;
-  align-items: center;
-  gap: 7px;
-  min-width: 0;
-}
-
-.startups__qr-label {
-  color: $c-white;
-  font-size: 15px;
-  font-weight: 600;
-  line-height: 20px;
-  white-space: nowrap;
-
-  @include below-desktop { font-size: 13px; }
-}
-
-.startups__qr-icon {
-  flex: none;
-  width: 49px;
-  height: 36px;
+  width: 154px;
+  height: auto;
   object-fit: contain;
 
-  @include below-desktop { width: 38px; height: 28px; }
+  @include below-desktop { width: 110px; }
 }
 
 .startups__qr-code {
@@ -320,6 +308,16 @@ const FEATURES = [
   border-radius: 50%;
   background: rgba(18, 27, 38, 0.2);
   color: rgba(255, 255, 255, 0.5);
+  transition: background-color 0.25s ease, color 0.25s ease,
+    transform 0.25s cubic-bezier(0.34, 1.4, 0.64, 1);
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: $c-white;
+    transform: scale(1.08);
+  }
+
+  &:active { transform: scale(0.94); }
 
   @include tablet { width: 48px; height: 48px; svg { width: 24px; height: 24px; } }
   @include mobile {
@@ -335,8 +333,11 @@ const FEATURES = [
 .startups__arrow--next {
   background: $c-accent;
   color: $c-navy;
+  box-shadow: 0 8px 24px rgba(132, 255, 193, 0.25);
 
   svg { transform: rotate(180deg); }
+
+  &:hover { background: $c-accent; filter: brightness(1.08); }
 }
 
 .startups__nav-title {

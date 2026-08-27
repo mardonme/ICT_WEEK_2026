@@ -25,8 +25,9 @@ const LOGOS = [
 
     <ul class="partners__grid">
       <LogoCard
-        v-for="logo in LOGOS"
+        v-for="(logo, i) in LOGOS"
         :key="logo.file"
+        :style="{ '--i': i }"
         :src="url(logo.file)"
         :alt="logo.alt"
         :width="logo.width"
@@ -59,6 +60,15 @@ const LOGOS = [
 
   @include tablet { font-size: 36px; line-height: 43.2px; }
   @include mobile { color: $c-white; font-size: 24px; line-height: 32.78px; }
+}
+
+@keyframes logo-in {
+  from { opacity: 0; transform: translateY(16px) scale(0.96); }
+}
+
+.partners.is-revealed :deep(.logo-card) {
+  animation: logo-in 0.55s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+  animation-delay: calc(var(--i, 0) * 45ms + 120ms);
 }
 
 /* Figmadagi joylashuv: desktop/planshetda 4 + 3, mobilda 3 + 2 + 2.

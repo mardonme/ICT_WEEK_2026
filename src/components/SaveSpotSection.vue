@@ -66,6 +66,8 @@ import photoCompact from '@/assets/images/save-spot-compact.webp'
 
 .save__figure {
   flex: 0 0 567px;
+  border-radius: $r-md;
+  overflow: hidden;
 
   img {
     width: 100%;
@@ -73,7 +75,10 @@ import photoCompact from '@/assets/images/save-spot-compact.webp'
     aspect-ratio: 567 / 412;
     border-radius: $r-md;
     object-fit: cover;
+    transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
   }
+
+  &:hover img { transform: scale(1.05); }
 
   @include below-desktop {
     flex: none;
@@ -127,6 +132,9 @@ import photoCompact from '@/assets/images/save-spot-compact.webp'
   padding: 0 16px 0 20px;
   font-size: 18px;
   line-height: 32px;
+  transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), filter 0.25s ease;
+
+  &:hover { transform: translateY(-2px); }
 
   @include tablet { height: 54px; padding: 0 24px; }
   @include mobile { justify-content: center; width: 100%; height: 48px; font-size: 16px; }

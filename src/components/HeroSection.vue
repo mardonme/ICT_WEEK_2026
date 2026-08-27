@@ -6,7 +6,8 @@ import videoPoster2x from '@/assets/images/hero-video-poster@2x.webp'
 import screenWide from '@/assets/images/hero-screen.webp'
 import screenCompact from '@/assets/images/hero-screen-compact.webp'
 import badge from '@/assets/images/award-badge.webp'
-import uzumTbcLogo from '@/assets/logos/misc/uzum-tbc.webp'
+import uzumTbcLogo from '@/assets/logos/misc/uzum-tbc.svg'
+import unicornIcon from '@/assets/logos/misc/unicorn.svg'
 import dealroomLogo from '@/assets/logos/attendees/dealroom.svg'
 import startupblinkLogo from '@/assets/logos/attendees/startupblink.svg'
 
@@ -37,8 +38,8 @@ const AWARDS = [
   },
   {
     narrow: true,
-    stats: [{ value: '2', label: 'Fintech Unicorns' }],
-    brands: { src: uzumTbcLogo, alt: 'Uzum va TBC Bank', w: 96, h: 61 },
+    stats: [{ value: '2', icon: unicornIcon, label: 'Fintech Unicorns' }],
+    brands: { src: uzumTbcLogo, alt: 'Uzum and TBC Bank', w: 96, h: 61 },
   },
 ]
 </script>
@@ -106,7 +107,9 @@ const AWARDS = [
 
         <ul class="hero__countdown">
           <li v-for="item in COUNTDOWN" :key="item.label" class="hero__count">
-            <span class="hero__count-value">{{ item.value.value }}</span>
+            <Transition name="tick" mode="out-in">
+              <span :key="item.value.value" class="hero__count-value">{{ item.value.value }}</span>
+            </Transition>
             <span class="hero__count-label">{{ item.label }}</span>
           </li>
         </ul>
@@ -144,7 +147,10 @@ const AWARDS = [
           />
 
           <div v-for="stat in award.stats" :key="stat.label" class="hero__stat-pair">
-            <p class="hero__stat-num">{{ stat.value }}</p>
+            <p class="hero__stat-num">
+              {{ stat.value }}
+              <img v-if="stat.icon" :src="stat.icon" alt="" width="31" height="32" loading="lazy" />
+            </p>
             <p class="hero__stat-label">{{ stat.label }}</p>
           </div>
 
@@ -180,6 +186,16 @@ const AWARDS = [
 </template>
 
 <style lang="scss" scoped>
+/* Kirish animatsiyasi: LCP ni kechiktirmaslik uchun sarlavha va video
+   faqat siljiydi (opacity o'zgarmaydi), pastdagi bloklar esa so'nib chiqadi. */
+@keyframes hero-rise {
+  from { transform: translateY(20px); }
+}
+
+@keyframes hero-fade-up {
+  from { opacity: 0; transform: translateY(24px); }
+}
+
 .hero {
   display: flex;
   flex-direction: column;
@@ -197,6 +213,7 @@ const AWARDS = [
   align-items: center;
   gap: 12px;
   width: 100%;
+  animation: hero-rise 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .hero__title {
@@ -245,6 +262,7 @@ const AWARDS = [
   align-items: center;
   gap: 16px;
   width: 100%;
+  animation: hero-rise 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.08s both;
 
   @include below-desktop { flex-direction: column; gap: 24px; }
 }
@@ -273,6 +291,12 @@ const AWARDS = [
   @include mobile { aspect-ratio: 354 / 206; border-radius: 14px; }
 }
 
+@keyframes play-pulse {
+  0% { opacity: 0.55; transform: scale(1); }
+  70% { opacity: 0; transform: scale(1.7); }
+  100% { opacity: 0; transform: scale(1.7); }
+}
+
 .hero__play {
   position: absolute;
   top: 50%;
@@ -286,9 +310,19 @@ const AWARDS = [
   backdrop-filter: blur(7.74px);
   color: $c-white;
   transform: translate(-50%, -50%);
-  transition: transform 0.2s ease;
+  transition: transform 0.25s cubic-bezier(0.34, 1.4, 0.64, 1);
 
-  &:hover { transform: translate(-50%, -50%) scale(1.08); }
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border: 2px solid rgba(255, 255, 255, 0.85);
+    border-radius: 50%;
+    animation: play-pulse 2.6s ease-out infinite;
+    pointer-events: none;
+  }
+
+  &:hover { transform: translate(-50%, -50%) scale(1.12); }
 
   @include mobile {
     width: 54px;
@@ -372,6 +406,10 @@ const AWARDS = [
 
 .hero__btn {
   gap: 4px;
+  transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), filter 0.25s ease,
+    background-color 0.25s ease;
+
+  &:hover { transform: translateY(-2px); }
   height: 52px;
   padding: 0 16px 0 20px;
   font-size: 18px;
@@ -411,10 +449,21 @@ const AWARDS = [
   padding: 20px 28px;
   border-radius: $r-lg;
   background: $c-card-strong;
+  transition: background-color 0.3s ease, transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+
+  &:hover {
+    background: rgba(18, 27, 38, 0.72);
+    transform: translateY(-3px);
+  }
 
   @include tablet { height: 92px; }
   @include mobile { height: 85px; padding: 20px 8px; }
 }
+
+.tick-enter-active { transition: opacity 0.28s ease, transform 0.28s cubic-bezier(0.22, 1, 0.36, 1); }
+.tick-leave-active { transition: opacity 0.16s ease, transform 0.16s ease; }
+.tick-enter-from { opacity: 0; transform: translateY(10px); }
+.tick-leave-to { opacity: 0; transform: translateY(-10px); }
 
 .hero__count-value {
   color: $c-white;
@@ -443,6 +492,7 @@ const AWARDS = [
   align-items: center;
   gap: 32px;
   width: 100%;
+  animation: hero-fade-up 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.25s both;
   padding: 16px 32px 16px 23px;
   border-radius: $r-xl;
   background: $c-card;
@@ -540,10 +590,15 @@ const AWARDS = [
 }
 
 .hero__stat-num {
+  display: flex;
+  align-items: center;
+  gap: 12px;
   color: $c-white;
   font-size: 32px;
   font-weight: 700;
   line-height: 35.2px;
+
+  img { width: 31px; height: 32px; }
 
   @include mobile { font-size: 22px; line-height: 24.2px; }
 }

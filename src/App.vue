@@ -23,12 +23,12 @@ import RegisterSection from './components/RegisterSection.vue'
 
     <main id="main" class="page__main">
       <HeroSection />
-      <SaveSpotSection />
-      <PastAttendeesSection />
-      <SummitSection />
-      <StartupsSection />
-      <PartnersSection />
-      <RegisterSection />
+      <SaveSpotSection v-reveal />
+      <PastAttendeesSection v-reveal />
+      <SummitSection v-reveal />
+      <StartupsSection v-reveal />
+      <PartnersSection v-reveal />
+      <RegisterSection v-reveal />
     </main>
   </div>
 </template>

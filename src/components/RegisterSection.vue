@@ -214,8 +214,17 @@ const onSubmit = () => { submitted.value = true }
   font-size: 12px;
   font-weight: 500;
   line-height: 16.39px;
+  transition: background-color 0.25s ease, box-shadow 0.25s ease;
 
   &::placeholder { color: $c-slate; }
+
+  &:hover { background: rgba(255, 255, 255, 0.11); }
+
+  &:focus {
+    outline: none;
+    background: rgba(255, 255, 255, 0.12);
+    box-shadow: 0 0 0 2px rgba(132, 255, 193, 0.55);
+  }
 
   /* select uchun o'q ikonkasi */
   &:is(select) {
@@ -265,6 +274,11 @@ const onSubmit = () => { submitted.value = true }
   color: $c-accent;
   font-size: 15px;
   font-weight: 600;
+  animation: success-in 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes success-in {
+  from { opacity: 0; transform: translateX(12px); }
 }
 
 .register__submit {
@@ -274,6 +288,15 @@ const onSubmit = () => { submitted.value = true }
   padding: 0 16px 0 20px;
   font-size: 18px;
   line-height: 32px;
+  transition: transform 0.25s cubic-bezier(0.34, 1.4, 0.64, 1), filter 0.25s ease,
+    box-shadow 0.25s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 28px rgba(132, 255, 193, 0.28);
+  }
+
+  &:active { transform: translateY(0) scale(0.98); }
 
   @include mobile { justify-content: center; width: 100%; }
 }
