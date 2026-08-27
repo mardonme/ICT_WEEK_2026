@@ -14,7 +14,14 @@
  *  7. Vercel'da qayta deploy qiling
  */
 
+// Arizalar shu nomli VARAQQA yoziladi (jadval nomi emas!).
+// Varaq bo'lmasa avtomatik yaratiladi — pastdagi yorliqlardan qidiring.
 const SHEET_NAME = 'Registrations'
+
+// Skriptni Sheets ichidan (Extensions → Apps Script) ochgan bo'lsangiz,
+// buni bo'sh qoldiring. Alohida script.google.com'da yaratgan bo'lsangiz —
+// jadval URL'idagi /d/<ID>/edit qismini shu yerga qo'ying.
+const SPREADSHEET_ID = ''
 
 const COLUMNS = [
   ['submittedAt', 'Vaqt'],
@@ -47,7 +54,16 @@ function doPost(e) {
 }
 
 function getSheet() {
-  const ss = SpreadsheetApp.getActiveSpreadsheet()
+  const ss = SPREADSHEET_ID
+    ? SpreadsheetApp.openById(SPREADSHEET_ID)
+    : SpreadsheetApp.getActiveSpreadsheet()
+
+  if (!ss) {
+    throw new Error(
+      'Jadval topilmadi. Skript alohida yaratilgan bo\'lsa SPREADSHEET_ID ni to\'ldiring.'
+    )
+  }
+
   let sheet = ss.getSheetByName(SHEET_NAME)
   if (!sheet) {
     sheet = ss.insertSheet(SHEET_NAME)

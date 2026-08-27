@@ -68,7 +68,18 @@ export default async function handler(req, res) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(record),
     })
-    if (!r.ok) throw new Error(`Sheets javobi: ${r.status}`)
+    if (!r.ok) throw new Error(`HTTP ${r.status}`)
+
+    // Apps Script ichki xatoda ham HTTP 200 qaytaradi — javob tanasini
+    // ham tekshirish shart, aks holda nosozlik sezilmay qoladi.
+    const text = await r.text()
+    let payload
+    try {
+      payload = JSON.parse(text)
+    } catch {
+      throw new Error(`JSON emas: ${text.slice(0, 200)}`)
+    }
+    if (!payload.ok) throw new Error(`Apps Script: ${payload.error || 'noma\'lum xato'}`)
   } catch (err) {
     console.error('Google Sheets xatosi:', err, JSON.stringify(record))
     return res.status(502).json({ error: 'storage_failed' })
