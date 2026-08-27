@@ -79,7 +79,7 @@ const FEATURES = [
   background: $c-card;
 
   @include below-desktop { gap: 24px; padding: 20px; }
-  @include mobile { gap: 20px; padding: 16px; border-radius: $r-lg; }
+  @include mobile { gap: 16px; padding: 12px 12px 16px; border-radius: $r-lg; }
 }
 
 .startups__card {
@@ -139,7 +139,8 @@ const FEATURES = [
   gap: 32px;
   padding: 24px;
 
-  @include below-desktop { gap: 20px; padding: 16px; }
+  @include tablet { gap: 20px; padding: 16px; }
+  @include mobile { gap: 20px; padding: 12px; }
 }
 
 /* ---------- Imtiyozlar setkasi ---------- */
@@ -160,7 +161,8 @@ const FEATURES = [
   border-radius: $r-lg;
   background: rgba(255, 255, 255, 0.05);
 
-  @include below-desktop { gap: 12px; padding: 12px 16px; }
+  @include tablet { gap: 12px; padding: 12px 16px; }
+  @include mobile { gap: 12px; min-height: 64px; padding: 8px 12px; border-radius: $r-md; }
 }
 
 .startups__metric {
@@ -174,7 +176,8 @@ const FEATURES = [
   line-height: 43.71px;
   white-space: nowrap;
 
-  @include below-desktop { width: 68px; font-size: 22px; line-height: 30px; }
+  @include tablet { width: 68px; font-size: 22px; line-height: 30px; }
+  @include mobile { width: 60px; font-size: 20px; line-height: 27px; }
 }
 
 .startups__feature-text {
@@ -183,7 +186,8 @@ const FEATURES = [
   font-weight: 600;
   line-height: 24px;
 
-  @include below-desktop { font-size: 13px; line-height: 18px; }
+  @include tablet { font-size: 13px; line-height: 18px; }
+  @include mobile { font-size: 12px; line-height: 18px; }
 }
 
 /* ---------- Pastki panel ---------- */
@@ -257,7 +261,15 @@ const FEATURES = [
 
   svg { transform: rotate(180deg); }
 
-  @include below-desktop { width: 48px; height: 48px; svg { width: 24px; height: 24px; } }
+  @include tablet { width: 48px; height: 48px; svg { width: 24px; height: 24px; } }
+  @include mobile {
+    width: 36px;
+    height: 36px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.03);
+
+    svg { width: 16px; height: 16px; }
+  }
 }
 
 .startups__arrow--next {
@@ -275,7 +287,7 @@ const FEATURES = [
   text-align: center;
   text-transform: uppercase;
 
-  @include below-desktop { font-size: 16px; line-height: 22px; }
-  @include mobile { font-size: 13px; line-height: 18px; }
+  @include tablet { font-size: 16px; line-height: 22px; }
+  @include mobile { font-size: 12px; font-weight: 600; line-height: 16.39px; }
 }
 </style>

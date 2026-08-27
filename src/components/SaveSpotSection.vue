@@ -36,8 +36,8 @@ import photoCompact from '@/assets/images/save-spot-compact.webp'
       <img
         :src="photoCompact"
         alt="Speaker on stage at ICT Week with a full auditorium"
-        width="567"
-        height="412"
+        width="1232"
+        height="700"
         loading="lazy"
         decoding="async"
       />

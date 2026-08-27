@@ -2,6 +2,7 @@
 import BaseIcon from './ui/BaseIcon.vue'
 import { useCountdown } from '@/composables/useCountdown'
 import videoPoster from '@/assets/images/hero-video-poster.webp'
+import videoPoster2x from '@/assets/images/hero-video-poster@2x.webp'
 import screenWide from '@/assets/images/hero-screen.webp'
 import screenCompact from '@/assets/images/hero-screen-compact.webp'
 import badge from '@/assets/images/award-badge.webp'
@@ -22,7 +23,7 @@ const AWARDS = [
       { value: '$4.3B', label: 'Startup Ecosystem Valuation' },
       { value: '#1', label: 'In venture investment growth globally' },
     ],
-    logo: { src: dealroomLogo, alt: 'dealroom.co', width: 92 },
+    logo: { src: dealroomLogo, alt: 'dealroom.co', width: 92, w: 152, h: 37 },
   },
   {
     // Mobil dizaynda StartupBlink nishoni shu kartaning ichida turadi
@@ -31,7 +32,7 @@ const AWARDS = [
       { value: '#1', label: 'Ecosystem in the World by Growth Rate' },
       { value: '#1', label: 'Startup Hub in Central Asia (Tashkent)' },
     ],
-    logo: { src: startupblinkLogo, alt: 'StartupBlink', width: 95 },
+    logo: { src: startupblinkLogo, alt: 'StartupBlink', width: 95, w: 160, h: 27 },
   },
   {
     narrow: true,
@@ -57,6 +58,8 @@ const AWARDS = [
         <img
           class="hero__video"
           :src="videoPoster"
+          :srcset="`${videoPoster} 769w, ${videoPoster2x} 1538w`"
+          sizes="(min-width: 1024px) 769px, 100vw"
           alt="ICT Week Uzbekistan venue in Tashkent seen from above"
           width="769"
           height="488"
@@ -71,30 +74,32 @@ const AWARDS = [
       <!-- Ma'lumot kartasi -->
       <div class="hero__card">
         <div class="hero__card-top">
-          <picture>
-            <source :srcset="screenWide" media="(min-width: 1024px)" />
+          <picture class="hero__screen-wrap">
+            <source :srcset="screenWide" media="(min-width: 641px)" />
             <img
               class="hero__screen"
               :src="screenCompact"
               alt="ICT Week stage screen showing Uzbek tech ecosystem statistics"
-              width="435"
-              height="187"
+              width="326"
+              height="233"
             />
           </picture>
 
-          <p class="hero__card-text">
-            Learn everything about the thriving Uzbek tech ecosystem — in just one week
-          </p>
+          <div class="hero__card-copy">
+            <p class="hero__card-text">
+              Learn everything about the thriving Uzbek tech ecosystem — in just one week
+            </p>
 
-          <div class="hero__card-actions">
-            <a class="hero__btn hero__btn--solid" href="#register">
-              Register now
-              <BaseIcon name="arrow-up-right" :size="24" />
-            </a>
-            <a class="hero__btn hero__btn--outline" href="#program">
-              <BaseIcon name="download" :size="20" />
-              Full agenda
-            </a>
+            <div class="hero__card-actions">
+              <a class="hero__btn hero__btn--solid" href="#register">
+                Register now
+                <BaseIcon name="arrow-up-right" :size="24" />
+              </a>
+              <a class="hero__btn hero__btn--outline" href="#program">
+                <BaseIcon name="download" :size="20" />
+                Full agenda
+              </a>
+            </div>
           </div>
         </div>
 
@@ -119,7 +124,7 @@ const AWARDS = [
         decoding="async"
       />
 
-      <ul class="hero__stats">
+      <ul class="hero__stats" role="list">
         <li
           v-for="(award, i) in AWARDS"
           :key="i"
@@ -131,8 +136,8 @@ const AWARDS = [
             class="hero__badge-inline"
             :src="badge"
             alt=""
-            width="48"
-            height="59"
+            width="300"
+            height="300"
             loading="lazy"
             decoding="async"
           />
@@ -153,6 +158,8 @@ const AWARDS = [
               class="hero__stat-logo"
               :src="award.logo.src"
               :alt="award.logo.alt"
+              :width="award.logo.w"
+              :height="award.logo.h"
               :style="{ width: award.logo.width + 'px' }"
               loading="lazy"
               decoding="async"
@@ -254,6 +261,7 @@ const AWARDS = [
   border-radius: 17.19px;
   object-fit: cover;
 
+  @include tablet { aspect-ratio: 644 / 332; }
   @include mobile { aspect-ratio: 354 / 206; border-radius: 14px; }
 }
 
@@ -303,7 +311,25 @@ const AWARDS = [
   flex-direction: column;
   gap: 16px;
 
-  @include tablet { flex-direction: row-reverse; gap: 16px; }
+  /* Planshetda matn chapda, rasm o'ngda */
+  @include tablet { flex-direction: row-reverse; align-items: stretch; }
+}
+
+.hero__card-copy {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+
+/* Chrome <picture> uchun display:contents ni qo'llamaydi, shuning uchun
+   flex o'lchami <picture> ning o'ziga beriladi. */
+.hero__screen-wrap {
+  display: block;
+  width: 100%;
+
+  @include tablet { flex: 0 0 284px; align-self: flex-start; }
 }
 
 .hero__screen {
@@ -313,7 +339,7 @@ const AWARDS = [
   border-radius: $r-lg;
   object-fit: cover;
 
-  @include tablet { flex: 0 0 284px; aspect-ratio: 284 / 136; }
+  @include tablet { aspect-ratio: 284 / 136; }
   @include mobile { aspect-ratio: 326 / 233; }
 }
 
@@ -413,7 +439,12 @@ const AWARDS = [
   border-radius: $r-xl;
   background: $c-card;
 
-  @include tablet { flex-direction: column; gap: 20px; padding: 20px; }
+  @include tablet {
+    flex-wrap: wrap;
+    gap: 20px 16px;
+    padding: 20px;
+  }
+
   @include mobile { flex-direction: column; gap: 12px; padding: 0; background: none; }
 }
 
@@ -423,7 +454,7 @@ const AWARDS = [
   height: 150px;
   object-fit: contain;
 
-  @include tablet { width: 108px; height: 108px; }
+  @include tablet { flex: 0 0 108px; width: 108px; height: 108px; }
   @include mobile { display: none; }
 }
 
@@ -435,8 +466,7 @@ const AWARDS = [
     display: block;
     flex: none;
     width: 48px;
-    height: 59px;
-    object-fit: contain;
+    height: 48px;
   }
 }
 
@@ -446,7 +476,9 @@ const AWARDS = [
   align-items: center;
   gap: 26px;
 
-  @include tablet { flex-wrap: wrap; gap: 16px; width: 100%; }
+  /* Planshetda kartalar to'g'ridan-to'g'ri .hero__awards ning bolalariga
+     aylanadi — shunda nishon 1-karta bilan bitta qatorda turadi. */
+  @include tablet { display: contents; }
   @include mobile { flex-direction: column; gap: 12px; width: 100%; }
 }
 
@@ -465,7 +497,9 @@ const AWARDS = [
     $grad-border border-box;
 
   @include tablet {
-    &:first-child { flex-basis: 100%; }
+    &:nth-child(1) { flex: 1 1 400px; }
+    &:nth-child(2) { flex: 1 1 310px; }
+    &:nth-child(3) { flex: 1 1 280px; }
   }
 
   @include mobile {
@@ -484,11 +518,12 @@ const AWARDS = [
 .hero__stat--narrow {
   flex: 0 1 255px;
 
-  @include mobile { height: 98px; }
+  @include mobile { flex: none; height: 98px; }
 }
 
 .hero__stat-pair {
   display: flex;
+  flex: 0 1 111px;
   flex-direction: column;
   gap: 7px;
   min-width: 0;
@@ -515,13 +550,17 @@ const AWARDS = [
   @include mobile { letter-spacing: 0; }
 }
 
+/* Uzum / TBC brendlari — Figmada 2026 nishoni ostidan boshlanadi */
 .hero__stat-brands {
   display: flex;
   flex-direction: column;
   gap: 6px;
+  margin-top: 26px;
   color: $c-white;
   font-size: 14px;
   font-weight: 600;
+
+  @include mobile { margin-top: 0; }
 }
 
 /* Desktopda yil va logo kartaning burchaklariga mahkamlanadi,

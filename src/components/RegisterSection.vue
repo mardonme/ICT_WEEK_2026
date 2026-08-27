@@ -169,8 +169,10 @@ const onSubmit = () => { submitted.value = true }
 .register__form {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 36px;
   width: 100%;
+
+  @include below-desktop { gap: 24px; }
 }
 
 .register__grid {

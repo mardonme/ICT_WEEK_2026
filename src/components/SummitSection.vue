@@ -58,8 +58,8 @@ const BULLETS = [
           class="summit__promo-img"
           :src="cardImage"
           alt="Enterprise Uzbekistan Summit session"
-          width="420"
-          height="370"
+          width="840"
+          height="740"
           loading="lazy"
           decoding="async"
         />

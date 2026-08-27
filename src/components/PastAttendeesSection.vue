@@ -12,31 +12,31 @@ const url = (name) =>
 // Figmadagi tartib: 5 + 5 + 5 + 4
 const ROWS = [
   [
-    { file: 'web-summit.svg', alt: 'Web Summit', width: 136 },
-    { file: 'plug-and-play.svg', alt: 'Plug and Play', width: 144 },
-    { file: 'mit.svg', alt: 'Massachusetts Institute of Technology', width: 152 },
-    { file: 'google-for-startups.svg', alt: 'Google for Startups', width: 136 },
-    { file: 'aws.svg', alt: 'Amazon Web Services', width: 96 },
+    { file: 'web-summit.svg', alt: 'Web Summit', width: 136, height: 68 },
+    { file: 'plug-and-play.svg', alt: 'Plug and Play', width: 144, height: 28 },
+    { file: 'mit.svg', alt: 'Massachusetts Institute of Technology', width: 152, height: 36 },
+    { file: 'google-for-startups.svg', alt: 'Google for Startups', width: 136, height: 20 },
+    { file: 'aws.svg', alt: 'Amazon Web Services', width: 96, height: 62 },
   ],
   [
-    { file: 'alchemist.webp', alt: 'Alchemist Accelerator', width: 168 },
-    { file: 'dealroom.svg', alt: 'Dealroom.co', width: 152 },
-    { file: 'startupblink.svg', alt: 'StartupBlink', width: 160 },
-    { file: 'domino-ventures.svg', alt: 'Domino Ventures', width: 144 },
-    { file: 'startup-genome.svg', alt: 'Startup Genome', width: 152 },
+    { file: 'alchemist.webp', alt: 'Alchemist Accelerator', width: 168, height: 28 },
+    { file: 'dealroom.svg', alt: 'Dealroom.co', width: 152, height: 37 },
+    { file: 'startupblink.svg', alt: 'StartupBlink', width: 160, height: 27 },
+    { file: 'domino-ventures.svg', alt: 'Domino Ventures', width: 144, height: 39 },
+    { file: 'startup-genome.svg', alt: 'Startup Genome', width: 152, height: 41 },
   ],
   [
-    { file: 'accesa.svg', alt: 'Accesa', width: 144 },
-    { file: 'sturgeon-capital.svg', alt: 'Sturgeon Capital', width: 144 },
-    { file: 'salesforce-org.svg', alt: 'Salesforce.org', width: 144 },
-    { file: 'ey.svg', alt: 'EY', width: 80 },
-    { file: 'global-startup-awards.svg', alt: 'Global Startup Awards', width: 124 },
+    { file: 'accesa.svg', alt: 'Accesa', width: 144, height: 49 },
+    { file: 'sturgeon-capital.svg', alt: 'Sturgeon Capital', width: 144, height: 52 },
+    { file: 'salesforce-org.svg', alt: 'Salesforce.org', width: 144, height: 67 },
+    { file: 'ey.svg', alt: 'EY', width: 80, height: 80 },
+    { file: 'global-startup-awards.svg', alt: 'Global Startup Awards', width: 124, height: 64 },
   ],
   [
-    { file: 'gbtp.svg', alt: 'GBTP — Gyeongbuk Technopark', width: 188 },
-    { file: 'polyvalent.svg', alt: 'Polyvalent', width: 196 },
-    { file: 'golden-gate-ventures.svg', alt: 'Golden Gate Ventures', width: 188 },
-    { file: 'sps-commerce.svg', alt: 'SPS Commerce', width: 196 },
+    { file: 'gbtp.svg', alt: 'GBTP — Gyeongbuk Technopark', width: 188, height: 58 },
+    { file: 'polyvalent.svg', alt: 'Polyvalent', width: 196, height: 22 },
+    { file: 'golden-gate-ventures.svg', alt: 'Golden Gate Ventures', width: 188, height: 74 },
+    { file: 'sps-commerce.svg', alt: 'SPS Commerce', width: 196, height: 54 },
   ],
 ]
 </script>
@@ -53,6 +53,7 @@ const ROWS = [
           :src="url(logo.file)"
           :alt="logo.alt"
           :width="logo.width"
+          :height="logo.height"
         />
       </ul>
     </div>

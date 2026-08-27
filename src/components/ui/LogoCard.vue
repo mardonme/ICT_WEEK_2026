@@ -2,13 +2,23 @@
 defineProps({
   src: { type: String, required: true },
   alt: { type: String, required: true },
+  // Logotipning Figmadagi o'lchami — brauzer joyni oldindan band qiladi
   width: { type: Number, required: true },
+  height: { type: Number, required: true },
 })
 </script>
 
 <template>
   <li class="logo-card">
-    <img :src="src" :alt="alt" :style="{ maxWidth: width + 'px' }" loading="lazy" decoding="async" />
+    <img
+      :src="src"
+      :alt="alt"
+      :width="width"
+      :height="height"
+      :style="{ maxWidth: width + 'px' }"
+      loading="lazy"
+      decoding="async"
+    />
   </li>
 </template>
 
