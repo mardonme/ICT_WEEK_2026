@@ -1,30 +1,53 @@
 <script setup>
+import { ref, computed, defineAsyncComponent } from 'vue'
 import BaseIcon from './ui/BaseIcon.vue'
+import SlideStartups from './slides/SlideStartups.vue'
+
+// Faqat birinchi slayd darhol yuklanadi; qolganlari o'q bosilganda
+// alohida chunk sifatida keladi — dastlabki JS hajmi oshmaydi.
+const SlideIndicators = defineAsyncComponent(() => import('./slides/SlideIndicators.vue'))
+const SlideEnterprise = defineAsyncComponent(() => import('./slides/SlideEnterprise.vue'))
+const SlideExport = defineAsyncComponent(() => import('./slides/SlideExport.vue'))
 import bg from '@/assets/images/startups-bg.webp'
 import ministryLogo from '@/assets/logos/misc/ministry-itpark.svg'
-import qrCode from '@/assets/logos/misc/startupbase-qr.svg'
-import startupBaseLogo from '@/assets/logos/misc/startup-base.svg'
 
-const FEATURES = [
-  { metric: '100%', text: 'Reimbursement for patenting and trademark registration' },
-  { icon: 'shield-check', text: 'Special legal regime "Regulatory Sandbox" for rapid piloting' },
-  { metric: '$50K', text: 'Reimbursement for mentor/trainer costs in acceleration programs' },
-  { metric: '1+1', text: 'Co-funding mechanism matching foreign investment dollar-for-dollar' },
-  { metric: '$20K', text: 'Reimbursement of international acceleration program costs' },
-  { metric: '1 YEAR', text: 'Free access to the massive Digital Data Platform for Startups' },
-  { metric: '1 YEAR', text: 'Free dedicated legal and financial consultations with top experts' },
-  { metric: '$10K', text: 'Awarding grants directly to winners of national hackathons and ideathons' },
+/** Figmadagi karusel slaydlari */
+const SLIDES = [
+  { title: 'Digital Startups Program', component: SlideStartups },
+  { title: 'Key indicators of IT Park members', component: SlideIndicators },
+  { title: 'Enterprise Uzbekistan', component: SlideEnterprise },
+  { title: 'Digital service and products export development', component: SlideExport },
 ]
+
+const index = ref(0)
+const direction = ref(1)
+const slide = computed(() => SLIDES[index.value])
+
+const go = (step) => {
+  direction.value = step
+  index.value = (index.value + step + SLIDES.length) % SLIDES.length
+}
+
+const onKey = (e) => {
+  if (e.key === 'ArrowRight') { e.preventDefault(); go(1) }
+  if (e.key === 'ArrowLeft') { e.preventDefault(); go(-1) }
+}
 </script>
 
 <template>
-  <section id="incentives" class="startups" aria-labelledby="startups-title">
+  <section
+    id="incentives"
+    class="startups"
+    aria-roledescription="carousel"
+    aria-label="IT Park programs"
+    @keydown="onKey"
+  >
     <div class="startups__card">
       <img class="startups__bg" :src="bg" alt="" width="1208" height="624" loading="lazy" decoding="async" />
 
       <div class="startups__bar">
         <span class="startups__bar-mark" aria-hidden="true"></span>
-        <h2 id="startups-title" class="startups__bar-title">Digital Startups Program</h2>
+        <h2 class="startups__bar-title">{{ slide.title }}</h2>
         <img
           class="startups__bar-logos"
           :src="ministryLogo"
@@ -36,63 +59,46 @@ const FEATURES = [
         />
       </div>
 
-      <div class="startups__body">
-        <ul class="startups__grid">
-          <li v-for="item in FEATURES" :key="item.text" class="startups__feature">
-            <span class="startups__metric">
-              <BaseIcon v-if="item.icon" :name="item.icon" :size="40" />
-              <template v-else>{{ item.metric }}</template>
-            </span>
-            <span class="startups__feature-text">{{ item.text }}</span>
-          </li>
-        </ul>
-
-        <div class="startups__footer">
-          <p class="startups__summary">
-            Digital Startups Program &ndash; a <strong>$50 million</strong> initiative, launched for
-            promising Uzbek tech startups. Funding, mentorship, intellectual property protection and
-            access to the global market &ndash; all available on one platform &ndash;
-            <strong>startupbase.uz</strong>
-          </p>
-
-          <a class="startups__qr" href="https://startupbase.uz" rel="noopener">
-            <img
-              class="startups__qr-brand"
-              :src="startupBaseLogo"
-              alt="Startup Base"
-              width="154"
-              height="36"
-              loading="lazy"
-              decoding="async"
-            />
-            <img
-              class="startups__qr-code"
-              :src="qrCode"
-              alt="startupbase.uz saytiga QR kod"
-              width="88"
-              height="88"
-              loading="lazy"
-              decoding="async"
-            />
-          </a>
-        </div>
+      <div
+        class="startups__body"
+        role="group"
+        aria-roledescription="slide"
+        :aria-label="`${index + 1} / ${SLIDES.length}: ${slide.title}`"
+      >
+        <Transition :name="direction > 0 ? 'slide-next' : 'slide-prev'" mode="out-in">
+          <component :is="slide.component" :key="index" />
+        </Transition>
       </div>
     </div>
 
     <div class="startups__nav">
-      <button class="startups__arrow" type="button" aria-label="Previous program" aria-disabled="true">
+      <button class="startups__arrow" type="button" aria-label="Previous program" @click="go(-1)">
         <BaseIcon name="arrow-left" :size="32" />
       </button>
-      <p class="startups__nav-title">Digital Startups Program</p>
+
+      <p class="startups__nav-title">{{ slide.title }}</p>
+
       <button
         class="startups__arrow startups__arrow--next"
         type="button"
         aria-label="Next program"
-        aria-disabled="true"
+        @click="go(1)"
       >
         <BaseIcon name="arrow-left" :size="32" />
       </button>
     </div>
+
+    <ol class="startups__dots">
+      <li v-for="(s, i) in SLIDES" :key="s.title">
+        <button
+          type="button"
+          :class="{ 'is-active': i === index }"
+          :aria-label="s.title"
+          :aria-current="i === index"
+          @click="direction = i > index ? 1 : -1; index = i"
+        />
+      </li>
+    </ol>
   </section>
 </template>
 
@@ -101,12 +107,12 @@ const FEATURES = [
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 32px;
+  gap: 24px;
   padding: 36px;
   border-radius: $r-xl;
   background: $c-card;
 
-  @include below-desktop { gap: 24px; padding: 20px; }
+  @include tablet { gap: 20px; padding: 20px; }
   @include mobile { gap: 16px; padding: 12px 12px 16px; border-radius: $r-lg; }
 }
 
@@ -128,7 +134,7 @@ const FEATURES = [
   opacity: 0.12;
 }
 
-/* ---------- Yashil sarlavha paneli ---------- */
+/* --- Yashil sarlavha paneli --- */
 .startups__bar {
   position: relative;
   z-index: 1;
@@ -142,20 +148,11 @@ const FEATURES = [
 }
 
 .startups__bar-mark {
+  flex: none;
   width: 2px;
   height: 21.7px;
   border-radius: 6px;
   background: $c-navy;
-}
-
-.startups__bar-logos {
-  width: 234px;
-  height: auto;
-  margin-left: auto;
-  object-fit: contain;
-
-  @include tablet { width: 180px; }
-  @include mobile { width: 120px; }
 }
 
 .startups__bar-title {
@@ -165,133 +162,42 @@ const FEATURES = [
   line-height: 32.78px;
   text-transform: uppercase;
 
-  @include below-desktop { font-size: 16px; line-height: 22px; }
-  @include mobile { font-size: 14px; line-height: 20px; }
+  @include tablet { font-size: 15px; line-height: 20px; }
+  @include mobile { font-size: 12px; line-height: 16px; }
+}
+
+.startups__bar-logos {
+  flex: none;
+  width: 234px;
+  height: auto;
+  margin-left: auto;
+  object-fit: contain;
+
+  @include tablet { width: 160px; }
+  @include mobile { width: 96px; }
 }
 
 .startups__body {
   position: relative;
   z-index: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 32px;
   padding: 24px;
 
-  @include tablet { gap: 20px; padding: 16px; }
-  @include mobile { gap: 20px; padding: 12px; }
+  @include below-desktop { padding: 16px; }
+  @include mobile { padding: 12px; }
 }
 
-/* ---------- Imtiyozlar setkasi ---------- */
-.startups__grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
+/* --- Slayd almashinuvi --- */
+.slide-next-enter-active,
+.slide-prev-enter-active { transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.22, 1, 0.36, 1); }
+.slide-next-leave-active,
+.slide-prev-leave-active { transition: opacity 0.2s ease, transform 0.2s ease; }
 
-  @include mobile { grid-template-columns: 1fr; }
-}
+.slide-next-enter-from { opacity: 0; transform: translateX(40px); }
+.slide-next-leave-to { opacity: 0; transform: translateX(-30px); }
+.slide-prev-enter-from { opacity: 0; transform: translateX(-40px); }
+.slide-prev-leave-to { opacity: 0; transform: translateX(30px); }
 
-.startups__feature {
-  display: flex;
-  align-items: center;
-  gap: 24px;
-  min-height: 76px;
-  padding: 14px 24px;
-  border-radius: $r-lg;
-  background: rgba(255, 255, 255, 0.05);
-  transition: background-color 0.3s ease, transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
-
-  &:hover {
-    background: rgba(255, 255, 255, 0.09);
-    transform: translateX(4px);
-  }
-
-  @include tablet { gap: 12px; padding: 12px 16px; }
-  @include mobile { gap: 12px; min-height: 64px; padding: 8px 12px; border-radius: $r-md; }
-}
-
-.startups__metric {
-  display: grid;
-  flex: none;
-  place-items: center;
-  width: 100px;
-  color: $c-accent;
-  font-size: 32px;
-  font-weight: 800;
-  line-height: 43.71px;
-  white-space: nowrap;
-
-  @include tablet { width: 68px; font-size: 22px; line-height: 30px; }
-  @include mobile { width: 60px; font-size: 20px; line-height: 27px; }
-}
-
-.startups__feature-text {
-  color: $c-body-strong;
-  font-size: 16px;
-  font-weight: 600;
-  line-height: 24px;
-
-  @include tablet { font-size: 13px; line-height: 18px; }
-  @include mobile { font-size: 12px; line-height: 18px; }
-}
-
-/* ---------- Pastki panel ---------- */
-.startups__footer {
-  display: flex;
-  gap: 12px;
-
-  @include below-desktop { flex-direction: column; }
-}
-
-.startups__summary {
-  flex: 1;
-  padding: 16px 24px;
-  border-radius: 18px;
-  background: linear-gradient(90deg, rgba(132, 255, 193, 0) 0%, rgba(132, 255, 193, 0.4) 100%);
-  color: $c-white;
-  font-size: 18px;
-  font-weight: 500;
-  line-height: 27px;
-
-  strong { font-weight: 700; }
-
-  @include below-desktop { padding: 14px 16px; font-size: 14px; line-height: 21px; }
-}
-
-.startups__qr {
-  display: flex;
-  flex: 0 0 285px;
-  align-items: center;
-  gap: 15px;
-  padding: 14px;
-  border-radius: 18px;
-  background: linear-gradient(90deg, rgba(132, 255, 193, 0) 0%, rgba(132, 255, 193, 0.4) 100%);
-  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), filter 0.3s ease;
-
-  &:hover { transform: translateY(-3px); filter: brightness(1.1); }
-
-  @include below-desktop { flex: none; }
-}
-
-/* Figma: ikonka + yozuv bitta vektor, 154x36 */
-.startups__qr-brand {
-  flex: 1;
-  width: 154px;
-  height: auto;
-  object-fit: contain;
-
-  @include below-desktop { width: 110px; }
-}
-
-.startups__qr-code {
-  flex: none;
-  width: 88px;
-  height: 88px;
-  object-fit: contain;
-
-  @include below-desktop { width: 64px; height: 64px; }
-}
-
-/* ---------- Karusel boshqaruvi ---------- */
+/* --- Boshqaruv --- */
 .startups__nav {
   display: flex;
   align-items: center;
@@ -311,12 +217,7 @@ const FEATURES = [
   transition: background-color 0.25s ease, color 0.25s ease,
     transform 0.25s cubic-bezier(0.34, 1.4, 0.64, 1);
 
-  &:hover {
-    background: rgba(255, 255, 255, 0.1);
-    color: $c-white;
-    transform: scale(1.08);
-  }
-
+  &:hover { background: rgba(255, 255, 255, 0.1); color: $c-white; transform: scale(1.08); }
   &:active { transform: scale(0.94); }
 
   @include tablet { width: 48px; height: 48px; svg { width: 24px; height: 24px; } }
@@ -337,10 +238,11 @@ const FEATURES = [
 
   svg { transform: rotate(180deg); }
 
-  &:hover { background: $c-accent; filter: brightness(1.08); }
+  &:hover { background: $c-accent; color: $c-navy; filter: brightness(1.08); }
 }
 
 .startups__nav-title {
+  flex: 1;
   color: $c-white;
   font-size: 23.3px;
   font-weight: 700;
@@ -348,7 +250,26 @@ const FEATURES = [
   text-align: center;
   text-transform: uppercase;
 
-  @include tablet { font-size: 16px; line-height: 22px; }
-  @include mobile { font-size: 12px; font-weight: 600; line-height: 16.39px; }
+  @include tablet { font-size: 15px; line-height: 20px; }
+  @include mobile { font-size: 11px; line-height: 15px; }
+}
+
+/* --- Nuqtalar --- */
+.startups__dots {
+  display: flex;
+  gap: 8px;
+
+  button {
+    display: block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.25);
+    transition: background-color 0.25s ease, width 0.25s ease;
+
+    &:hover { background: rgba(255, 255, 255, 0.5); }
+
+    &.is-active { width: 24px; border-radius: 4px; background: $c-accent; }
+  }
 }
 </style>

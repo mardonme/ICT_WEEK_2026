@@ -33,7 +33,8 @@ src/
 │   ├── SaveSpotSection.vue
 │   ├── PastAttendeesSection.vue
 │   ├── SummitSection.vue      # Tab'lar + summit kartasi
-│   ├── StartupsSection.vue    # Digital Startups Program
+│   ├── StartupsSection.vue    # Dasturlar karuseli (4 slayd)
+│   ├── slides/                # Karusel slaydlari + BarChart
 │   ├── PartnersSection.vue
 │   ├── RegisterSection.vue    # Ro'yxatdan o'tish formasi
 │   └── ui/
