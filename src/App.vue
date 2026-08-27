@@ -7,29 +7,37 @@ import SummitSection from './components/SummitSection.vue'
 import StartupsSection from './components/StartupsSection.vue'
 import PartnersSection from './components/PartnersSection.vue'
 import RegisterSection from './components/RegisterSection.vue'
+import ThankYouView from './components/ThankYouView.vue'
+import { useRoute } from '@/composables/useRoute'
+
+const { path } = useRoute()
 </script>
 
 <template>
   <a class="skip-link" href="#main">Skip to main content</a>
 
-  <div id="top" class="page">
+  <div id="top" class="page" :class="{ 'page--compact': path === '/thank-you' }">
     <div class="page__decor" aria-hidden="true">
       <span class="page__aurora page__aurora--1"></span>
       <span class="page__aurora page__aurora--2"></span>
       <span class="page__aurora page__aurora--3"></span>
     </div>
 
-    <AppHeader />
+    <ThankYouView v-if="path === '/thank-you'" />
 
-    <main id="main" class="page__main">
-      <HeroSection />
-      <SaveSpotSection v-reveal />
-      <PastAttendeesSection v-reveal />
-      <SummitSection v-reveal />
-      <StartupsSection v-reveal />
-      <PartnersSection v-reveal />
-      <RegisterSection v-reveal />
-    </main>
+    <template v-else>
+      <AppHeader />
+
+      <main id="main" class="page__main">
+        <HeroSection />
+        <SaveSpotSection v-reveal />
+        <PastAttendeesSection v-reveal />
+        <SummitSection v-reveal />
+        <StartupsSection v-reveal />
+        <PartnersSection v-reveal />
+        <RegisterSection v-reveal />
+      </main>
+    </template>
   </div>
 </template>
 
@@ -87,6 +95,19 @@ import RegisterSection from './components/RegisterSection.vue'
 }
 
 .page__aurora--1 { top: 500px; height: 1400px; }
+
+/* Thank page bitta ekran balandligida — dekoratsiya ham unga moslanadi */
+.page--compact {
+  .page__decor {
+    background:
+      radial-gradient(760px 620px at -120px 45%, rgba(20, 72, 68, 0.7), transparent 72%),
+      radial-gradient(760px 620px at calc(100% + 120px) 55%, rgba(18, 68, 66, 0.65), transparent 72%);
+  }
+
+  .page__aurora--1 { top: 0; height: 100%; }
+  .page__aurora--2,
+  .page__aurora--3 { display: none; }
+}
 .page__aurora--2 { top: 3250px; height: 1350px; transform: scaleX(-1); }
 .page__aurora--3 { top: 5400px; height: 950px; }
 

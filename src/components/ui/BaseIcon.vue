@@ -42,6 +42,14 @@ const ICONS = {
     box: '0 0 40 40',
     body: '<path stroke="currentColor" stroke-linecap="round" stroke-width="3" d="m15 19.999 3.334 3.333L25 16.666m8.332 5c0 8.334-5.833 12.5-12.765 14.918a1.67 1.67 0 0 1-1.117-.017C12.5 34.167 6.668 30 6.668 21.667V9.998a1.667 1.667 0 0 1 1.666-1.666c3.334 0 7.5-2 10.4-4.534a1.95 1.95 0 0 1 2.532 0c2.917 2.55 7.067 4.534 10.4 4.534a1.666 1.666 0 0 1 1.666 1.666z"/>',
   },
+  home: {
+    box: '0 0 20 20',
+    body:
+      '<path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.25" ' +
+      'd="M1.667 9.167 10 2.5l8.333 6.667v8.333a1.667 1.667 0 0 1-1.666 1.667H3.333a1.667 1.667 0 0 1-1.666-1.667z"/>' +
+      '<path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.25" ' +
+      'd="M7.5 19.167V10.833h5v8.334"/>',
+  },
   play: {
     box: '0 0 21 21',
     body: '<path fill="currentColor" d="M4.5 10.125V5c0-1.557 1.684-2.532 3.034-1.756L12 5.812l4.447 2.557c1.354.779 1.354 2.733 0 3.511L12 14.437l-4.466 2.568c-1.35.776-3.034-.198-3.034-1.756z"/>',

@@ -26,7 +26,8 @@ src/
 ├── App.vue                    # Sahifa qobig'i + fon dekoratsiyasi
 ├── main.js
 ├── composables/
-│   └── useCountdown.js        # Tadbirgacha qolgan vaqt
+│   ├── useCountdown.js        # Tadbirgacha qolgan vaqt
+│   └── useRoute.js            # History API asosidagi yengil marshrutlash
 ├── components/
 │   ├── AppHeader.vue          # Navbar (desktop / planshet / mobil)
 │   ├── HeroSection.vue        # Sarlavha, video, countdown, yutuqlar

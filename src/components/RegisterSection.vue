@@ -1,6 +1,6 @@
 <script setup>
-import { ref } from 'vue'
 import BaseIcon from './ui/BaseIcon.vue'
+import { navigate } from '@/composables/useRoute'
 
 const TRACKS = [
   'Enterprise Uzbekistan',
@@ -56,8 +56,8 @@ const RIGHT_FIELDS = [
 // keyin o'ng ustun. CSS grid ustun bo'ylab to'ldiradi (grid-auto-flow: column).
 const FIELDS = [...LEFT_FIELDS, ...RIGHT_FIELDS]
 
-const submitted = ref(false)
-const onSubmit = () => { submitted.value = true }
+// Muvaffaqiyatli yuborilgach Figmadagi "Thank page" ga o'tamiz
+const onSubmit = () => navigate('/thank-you')
 </script>
 
 <template>
@@ -102,9 +102,6 @@ const onSubmit = () => { submitted.value = true }
       </div>
 
       <div class="register__actions">
-        <p v-if="submitted" class="register__success" role="status">
-          Thank you! Your registration has been received.
-        </p>
         <button class="register__submit" type="submit">
           Register now
           <BaseIcon name="arrow-up-right" :size="24" />
@@ -268,17 +265,6 @@ const onSubmit = () => { submitted.value = true }
   gap: 16px;
 
   @include mobile { flex-direction: column-reverse; align-items: stretch; }
-}
-
-.register__success {
-  color: $c-accent;
-  font-size: 15px;
-  font-weight: 600;
-  animation: success-in 0.4s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-@keyframes success-in {
-  from { opacity: 0; transform: translateX(12px); }
 }
 
 .register__submit {
