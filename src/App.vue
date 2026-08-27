@@ -36,7 +36,6 @@ import RegisterSection from './components/RegisterSection.vue'
 <style lang="scss" scoped>
 .page {
   position: relative;
-  overflow: hidden;
   min-height: 100dvh;
   background: #010609;
 }
@@ -45,10 +44,14 @@ import RegisterSection from './components/RegisterSection.vue'
    Figma renderidan o'lchangan piksel qiymatlariga moslangan:
    sahifaning chap va o'ng chekkalarida mayin teal nur, ustida
    ikkilik raqamlardan iborat "Northern Lights" teksturasi. */
+/* Dekoratsiya shu yerda kesiladi. `overflow` ni .page ga qo'yish mumkin emas —
+   u sahifani scroll konteyneriga aylantiradi va anchorga o'tishda kontentni
+   ichkaridan surib yuboradi. */
 .page__decor {
   position: absolute;
   inset: 0;
   z-index: 0;
+  overflow: hidden;
   pointer-events: none;
   background:
     radial-gradient(900px 800px at -110px 1300px, rgba(20, 72, 68, 0.75), transparent 72%),
