@@ -113,6 +113,13 @@ Lokalda funksiyani sinash uchun `npx vercel dev` ishlatiladi — oddiy
 `SHEETS_WEBHOOK_URL` sozlanmagan bo'lsa forma baribir ishlayveradi — ariza
 Vercel funksiya loglariga yoziladi, ya'ni yo'qolmaydi.
 
+### `vercel.json` dagi rewrite haqida
+
+SPA fallback naqshi `/((?!api/).*)` — ya'ni `/api/*` dan tashqari hamma yo'l
+`index.html` ga yo'naltiriladi. Oddiy `/(.*)` qo'yilsa serverless funksiya
+o'rniga HTML qaytishi mumkin. (JSON izohni qo'llab-quvvatlamaydi, shuning
+uchun tushuntirish shu yerda.)
+
 ### Himoya
 
 - **Honeypot** — odam ko'rmaydigan `website` maydoni to'ldirilsa, ariza jim tashlab yuboriladi

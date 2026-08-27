@@ -2,7 +2,6 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "rewrites": [
     {
-      "//": "SPA fallback — lekin /api/* serverless funksiyalarga tegmaymiz",
       "source": "/((?!api/).*)",
       "destination": "/index.html"
     }
