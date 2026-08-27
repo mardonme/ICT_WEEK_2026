@@ -6,6 +6,7 @@ import videoPoster2x from '@/assets/images/hero-video-poster@2x.webp'
 import screenWide from '@/assets/images/hero-screen.webp'
 import screenCompact from '@/assets/images/hero-screen-compact.webp'
 import badge from '@/assets/images/award-badge.webp'
+import uzumTbcLogo from '@/assets/logos/misc/uzum-tbc.webp'
 import dealroomLogo from '@/assets/logos/attendees/dealroom.svg'
 import startupblinkLogo from '@/assets/logos/attendees/startupblink.svg'
 
@@ -37,7 +38,7 @@ const AWARDS = [
   {
     narrow: true,
     stats: [{ value: '2', label: 'Fintech Unicorns' }],
-    brands: ['Uzum', 'TBC Bank'],
+    brands: { src: uzumTbcLogo, alt: 'Uzum va TBC Bank', w: 96, h: 61 },
   },
 ]
 </script>
@@ -147,9 +148,16 @@ const AWARDS = [
             <p class="hero__stat-label">{{ stat.label }}</p>
           </div>
 
-          <div v-if="award.brands" class="hero__stat-brands">
-            <span v-for="brand in award.brands" :key="brand">{{ brand }}</span>
-          </div>
+          <img
+            v-if="award.brands"
+            class="hero__stat-brands"
+            :src="award.brands.src"
+            :alt="award.brands.alt"
+            :width="award.brands.w"
+            :height="award.brands.h"
+            loading="lazy"
+            decoding="async"
+          />
 
           <div class="hero__stat-side">
             <span class="hero__stat-year">2026</span>
@@ -550,15 +558,12 @@ const AWARDS = [
   @include mobile { letter-spacing: 0; }
 }
 
-/* Uzum / TBC brendlari — Figmada 2026 nishoni ostidan boshlanadi */
+/* Uzum / TBC logolari — Figmada 2026 nishoni ostidan boshlanadi */
 .hero__stat-brands {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
+  width: 96px;
+  height: auto;
   margin-top: 26px;
-  color: $c-white;
-  font-size: 14px;
-  font-weight: 600;
+  object-fit: contain;
 
   @include mobile { margin-top: 0; }
 }

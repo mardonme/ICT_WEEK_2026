@@ -1,6 +1,9 @@
 <script setup>
 import BaseIcon from './ui/BaseIcon.vue'
 import bg from '@/assets/images/startups-bg.webp'
+import ministryLogo from '@/assets/logos/misc/ministry-itpark.webp'
+import qrCode from '@/assets/logos/misc/startupbase-qr.webp'
+import startupBaseIcon from '@/assets/logos/misc/startup-base-icon.webp'
 
 const FEATURES = [
   { metric: '100%', text: 'Reimbursement for patenting and trademark registration' },
@@ -22,6 +25,15 @@ const FEATURES = [
       <div class="startups__bar">
         <span class="startups__bar-mark" aria-hidden="true"></span>
         <h2 id="startups-title" class="startups__bar-title">Digital Startups Program</h2>
+        <img
+          class="startups__bar-logos"
+          :src="ministryLogo"
+          alt="Ministry of Digital Technologies of the Republic of Uzbekistan · IT Park Uzbekistan"
+          width="234"
+          height="31"
+          loading="lazy"
+          decoding="async"
+        />
       </div>
 
       <div class="startups__body">
@@ -44,8 +56,27 @@ const FEATURES = [
           </p>
 
           <a class="startups__qr" href="https://startupbase.uz" rel="noopener">
-            <span class="startups__qr-label">Startup Base</span>
-            <span class="startups__qr-code" aria-hidden="true"></span>
+            <span class="startups__qr-brand">
+              <img
+                class="startups__qr-icon"
+                :src="startupBaseIcon"
+                alt=""
+                width="49"
+                height="36"
+                loading="lazy"
+                decoding="async"
+              />
+              <span class="startups__qr-label">Startup Base</span>
+            </span>
+            <img
+              class="startups__qr-code"
+              :src="qrCode"
+              alt="startupbase.uz saytiga QR kod"
+              width="88"
+              height="88"
+              loading="lazy"
+              decoding="async"
+            />
           </a>
         </div>
       </div>
@@ -53,7 +84,7 @@ const FEATURES = [
 
     <div class="startups__nav">
       <button class="startups__arrow" type="button" aria-label="Previous program" aria-disabled="true">
-        <BaseIcon name="arrow-right" :size="32" />
+        <BaseIcon name="arrow-left" :size="32" />
       </button>
       <p class="startups__nav-title">Digital Startups Program</p>
       <button
@@ -62,7 +93,7 @@ const FEATURES = [
         aria-label="Next program"
         aria-disabled="true"
       >
-        <BaseIcon name="arrow-right" :size="32" />
+        <BaseIcon name="arrow-left" :size="32" />
       </button>
     </div>
   </section>
@@ -118,6 +149,16 @@ const FEATURES = [
   height: 21.7px;
   border-radius: 6px;
   background: $c-navy;
+}
+
+.startups__bar-logos {
+  width: 234px;
+  height: auto;
+  margin-left: auto;
+  object-fit: contain;
+
+  @include tablet { width: 180px; }
+  @include mobile { width: 120px; }
 }
 
 .startups__bar-title {
@@ -225,20 +266,41 @@ const FEATURES = [
   @include below-desktop { flex: none; }
 }
 
-.startups__qr-label {
+/* Figma: ikonka 47.5 + oraliq 7 + yozuv 99.3 = 154 px */
+.startups__qr-brand {
+  display: flex;
   flex: 1;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+}
+
+.startups__qr-label {
   color: $c-white;
-  font-size: 18px;
+  font-size: 15px;
   font-weight: 600;
-  line-height: 24px;
+  line-height: 20px;
+  white-space: nowrap;
+
+  @include below-desktop { font-size: 13px; }
+}
+
+.startups__qr-icon {
+  flex: none;
+  width: 49px;
+  height: 36px;
+  object-fit: contain;
+
+  @include below-desktop { width: 38px; height: 28px; }
 }
 
 .startups__qr-code {
   flex: none;
   width: 88px;
   height: 88px;
-  border-radius: 4px;
-  background: $c-white;
+  object-fit: contain;
+
+  @include below-desktop { width: 64px; height: 64px; }
 }
 
 /* ---------- Karusel boshqaruvi ---------- */
@@ -257,9 +319,7 @@ const FEATURES = [
   height: 72px;
   border-radius: 50%;
   background: rgba(18, 27, 38, 0.2);
-  color: $c-white;
-
-  svg { transform: rotate(180deg); }
+  color: rgba(255, 255, 255, 0.5);
 
   @include tablet { width: 48px; height: 48px; svg { width: 24px; height: 24px; } }
   @include mobile {
@@ -276,7 +336,7 @@ const FEATURES = [
   background: $c-accent;
   color: $c-navy;
 
-  svg { transform: none; }
+  svg { transform: rotate(180deg); }
 }
 
 .startups__nav-title {
