@@ -51,3 +51,32 @@
   backdrop-filter: blur($blur);
   -webkit-backdrop-filter: blur($blur);
 }
+
+// ============ Tugmalar ============
+@mixin btn-base {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: $r-md;
+  font-weight: 700;
+  white-space: nowrap;
+  transition: filter 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+}
+
+/// To'ldirilgan mint tugma (Figma: fill #84ffc1, matn #121b26)
+@mixin btn-solid {
+  @include btn-base;
+  background: $c-accent;
+  color: $c-navy;
+
+  &:hover { filter: brightness(1.08); }
+}
+
+/// Chegarali tugma (Figma: 1px #84ffc1, matn #84ffc1)
+@mixin btn-outline {
+  @include btn-base;
+  border: 1px solid $c-accent;
+  color: $c-accent;
+
+  &:hover { background: rgba(132, 255, 193, 0.1); }
+}

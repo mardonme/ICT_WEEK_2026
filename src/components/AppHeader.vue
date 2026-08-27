@@ -16,11 +16,11 @@ const menuOpen = ref(false)
 <template>
   <header class="header">
     <div class="header__bar">
-      <a class="header__logo" href="#top" aria-label="ICT WEEK 2026 — bosh sahifa">
+      <a class="header__logo" href="#top" aria-label="ICT WEEK 2026 — home">
         <img :src="logoUrl" alt="" width="67" height="42" />
       </a>
 
-      <nav class="header__nav" aria-label="Asosiy menyu">
+      <nav class="header__nav" aria-label="Main navigation">
         <ul class="header__list">
           <li v-for="link in NAV_LINKS" :key="link.label">
             <a
@@ -53,7 +53,7 @@ const menuOpen = ref(false)
           aria-controls="mobile-menu"
           @click="menuOpen = !menuOpen"
         >
-          <span class="visually-hidden">{{ menuOpen ? 'Menyuni yopish' : 'Menyuni ochish' }}</span>
+          <span class="visually-hidden">{{ menuOpen ? 'Close menu' : 'Open menu' }}</span>
           <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true">
             <path
               :d="menuOpen ? 'M5 5l10 10M15 5L5 15' : 'M3.33 5.83h13.34M3.33 10h13.34M3.33 14.17h13.34'"
@@ -67,7 +67,7 @@ const menuOpen = ref(false)
       </div>
     </div>
 
-    <nav v-show="menuOpen" id="mobile-menu" class="header__mobile" aria-label="Mobil menyu">
+    <nav v-show="menuOpen" id="mobile-menu" class="header__mobile" aria-label="Mobile navigation">
       <ul>
         <li v-for="link in NAV_LINKS" :key="link.label">
           <a :href="link.href" @click="menuOpen = false">{{ link.label }}</a>
@@ -239,7 +239,7 @@ const menuOpen = ref(false)
   @include mobile { display: grid; }
 }
 
-/* --- Mobil menyu --- */
+/* --- Mobile navigation --- */
 .header__mobile {
   display: none;
 
