@@ -1,0 +1,57 @@
+// ============================================================
+//  Design tokenlar — Figma "⚙️ ICT WEEK 2026" faylidan olingan
+// ============================================================
+
+// --- Fon va sirtlar ---
+$c-bg:          #010d12;
+$c-bg-deep:     #000b10;
+$c-teal:        #004e5c;
+$c-navy:        #121b26;
+$c-navy-deep:   #01141a;
+
+$c-card:        rgba(18, 27, 38, 0.4);   // #121b2666 — bo'lim kartalari
+$c-card-strong: rgba(18, 27, 38, 0.5);   // #121b2680 — ichki kartalar
+$c-card-soft:   rgba(18, 27, 38, 0.3);   // #121b264d
+$c-surface:     rgba(255, 255, 255, 0.05);
+$c-surface-dim: rgba(255, 255, 255, 0.02);
+
+// --- Urg'u ---
+$c-accent:      #84ffc1;
+$c-accent-deep: #459b6f;
+$grad-accent:   linear-gradient(180deg, $c-accent 0%, $c-accent-deep 100%);
+
+// --- Matn ---
+$c-white:       #ffffff;
+$c-heading:     #ededf2;
+$c-body:        rgba(255, 255, 255, 0.68);  // #ffffffad
+$c-body-strong: rgba(255, 255, 255, 0.8);   // #ffffffcc
+$c-muted:       #b5b2b1;
+$c-muted-alt:   #a4a7ae;
+$c-slate:       #6d798b;
+
+// --- Chegaralar ---
+// Kartalarning gradient chegarasi (Figma: 1px inside, opacity .3)
+$grad-border:   linear-gradient(90deg, #155b7f 0%, #1bdb86 100%);
+$border-opacity: 0.3;
+
+// --- Burchak radiuslari ---
+$r-sm:   6px;
+$r-md:   12px;
+$r-lg:   16px;
+$r-xl:   24px;
+$r-pill: 999px;
+
+// --- Layout ---
+$container-desktop: 1280px;  // 1440 frame - 2×80
+$container-tablet:  656px;   // 720 frame  - 2×32
+$pad-desktop:       80px;
+$pad-tablet:        32px;
+$pad-mobile:        16px;
+
+$section-gap-desktop: 72px;
+$section-gap-tablet:  48px;
+$section-gap-mobile:  40px;
+
+// --- Breakpointlar (Figma frame'lari: 1440 / 720 / 390) ---
+$bp-desktop: 1024px;
+$bp-mobile:  640px;
